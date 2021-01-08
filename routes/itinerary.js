@@ -29,7 +29,7 @@ router.get("/", function (req, res, next) {
   from itinerary
   join member on itinerary.member_id = member.newsId
   where itinerary.id
-  in (select itinerary_id from itin_region_city_rela join citycategory on citycategory.id = itin_region_city_rela.city_id join regioncategory on regioncategory.id = itin_region_city_rela.region_id where citycategory.city = '${town}' or regioncategory.region = '${area}')
+  in (select itinerary_id from spotsbox join citycategory on citycategory.city = spotsbox.location join regioncategory on regioncategory.id = citycategory.regionCategory_id where citycategory.city = '${town}' or regioncategory.region = '${area}')
   `;
 
   let handleSql = `select * from itinerary 
