@@ -3,10 +3,12 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-
+//
+//自定義路由檔案
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
-
+var itinRouter = require("./routes/itinerary");
+//
 var app = express();
 
 //使用環境參數
@@ -22,21 +24,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-
+//
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/itinerary", itinRouter);
 //
 //
 //
 //資料庫連線
-var mysql = require("mysql");
-var conn = mysql.createConnection({
-  host: process.env["dbhost"],
-  user: process.env["dbuser"],
-  password: process.env["dbpassword"],
-  database: process.env["database"],
-});
+// var mysql = require("mysql");
+// var conn = mysql.createConnection({
+//   host: process.env["dbhost"],
+//   user: process.env["dbuser"],
+//   password: process.env["dbpassword"],
+//   database: process.env["database"],
+// });
 //
+//測試用
 app.get("/member/:id", function (req, res) {
   conn.query(
     "select * from member where id = ?",
@@ -52,6 +56,7 @@ app.get("/member/:id", function (req, res) {
 });
 //
 //
+//後方都不要管
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
