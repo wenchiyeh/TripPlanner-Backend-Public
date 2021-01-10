@@ -3,6 +3,7 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+var cors = require("cors");
 //
 //自定義路由檔案
 var indexRouter = require("./routes/index");
@@ -10,15 +11,15 @@ var usersRouter = require("./routes/users");
 var itinRouter = require("./routes/itinerary");
 //
 var app = express();
-
+//
 //使用環境參數
 require("dotenv").config();
 //
-
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
-
+//
+app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -40,6 +41,12 @@ app.use("/itinerary", itinRouter);
 //   database: process.env["database"],
 // });
 //
+//圖片上傳
+app.post("/upload", function (req, res) {
+  //測試fetch
+  let test = "ok";
+  res.send(JSON.stringify(test));
+});
 //測試用
 app.get("/member/:id", function (req, res) {
   conn.query(
@@ -72,8 +79,5 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
-const usePort = 5000;
-app.listen(usePort);
-console.log("伺服器啟動中 port:" + usePort);
 
 module.exports = app;
