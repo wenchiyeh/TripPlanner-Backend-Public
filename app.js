@@ -8,6 +8,7 @@ var logger = require("morgan");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var itinRouter = require("./routes/itinerary");
+var tbRouter = require("./routes/travelBuddies");
 //
 var app = express();
 
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/itinerary", itinRouter);
+app.use("/travelbuddies", tbRouter);
 //
 //
 //
