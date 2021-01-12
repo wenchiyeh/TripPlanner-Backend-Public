@@ -13,13 +13,13 @@ var conn = mysql.createConnection({
 
 /* GET itinerary listing. */
 router.get("/", function (req, res, next) {
-  //let { email = "*"} = req.query;
+  let { email = "*"} = req.query;
 
   let sqlKey = `select * from member where valid=1`;
 
   let handleSql = `select * from member 
   where member_sex = 1 
-  and valid=1 
+  and valid= 1
   and email = ?
   like ?`;
   //   console.log(handleSql);

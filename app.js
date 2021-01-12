@@ -9,7 +9,11 @@ var cors = require("cors");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var itinRouter = require("./routes/itinerary");
-var loginRouter =require("./routes/login");
+var tbRouter = require("./routes/travelBuddies");
+var tbmyaccountRouter = require("./routes/tbMyAccount");
+var testRouter = require("./routes/test");
+var loginRouter = require("./routes/login");
+
 //
 var app = express();
 //
@@ -25,12 +29,16 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 //
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/itinerary", itinRouter);
-app.use("/login",loginRouter);
+app.use("/travelbuddies", tbRouter);
+app.use("/tbmyaccount", tbmyaccountRouter);
+app.use("/test", testRouter);
+app.use("/login", loginRouter);
 //
 //
 //
