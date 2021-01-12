@@ -15,7 +15,7 @@ var conn = mysql.createConnection({
 router.get("/", function (req, res, next) {
   let { area = "*", town = "*", day = 1, keyword = "*" } = req.query;
 
-  let sqlKey = `select
+  let sqlGetFilterList = `select
   itinerary.id as itin_id,
   itinerary.title,
   itinerary.info,
@@ -32,15 +32,16 @@ router.get("/", function (req, res, next) {
   in (select itinerary_id from spotsbox join citycategory on citycategory.city = spotsbox.location join regioncategory on regioncategory.id = citycategory.regionCategory_id where citycategory.city = '${town}' or regioncategory.region = '${area}')
   `;
 
-  let handleSql = `select * from itinerary 
-    where publish_time != NULL 
-    and valid=1 
-    and area = ? 
-    and town = ? 
-    and day >= ? 
-    like ?`;
+  // let handleSql = `select * from itinerary
+  //   where publish_time != NULL
+  //   and valid=1
+  //   and area = ?
+  //   and town = ?
+  //   and day >= ?
+  //   like ?`;
+
   //   console.log(handleSql);
-  conn.query(sqlKey, [], function (err, rows) {
+  conn.query(sqlGetFilterList, [], function (err, rows) {
     //   conn.query(handleSql, [area, town, day, keyword], function (err, rows) {
     if (err) {
       console.log(JSON.stringify(err));
@@ -50,9 +51,54 @@ router.get("/", function (req, res, next) {
   });
 });
 
-router.get("/edit/:itin_id", function (req, res, next) {
-  let itin_id = req.itin_id;
-  res.send(`edit: ${itin_id}`);
+router.get("/:itinId", function (req, res, next) {
+  let { itinId } = req.itinId;
+  let returnData = [];
+  let sqlGetItin = `select
+  member.member_name,
+  itinerary.title,
+  itinerary.duration,
+  itinerary.publish_time,
+  itinerary.heart,
+  itinerary.keep,
+  itinerary.view,
+  itinerary.info
+  from itinerary
+  join member on itinerary.member_id = member.newsId
+  where itinerary.id = ${itinId}
+  `;
+  let sqlGetBox = `select
+  day,
+  box_order,
+  type,
+  title,
+  begin,
+  location,
+  lat,
+  lng,
+  images,
+  info
+  from spotsbox
+  where itinerary_id = ${itinId}
+  `;
+
+  // conn.query(sqlGetItin, [], function (err, rows) {
+  //   if (err) {
+  //     console.log(JSON.stringify(err));
+  //     return;
+  //   }
+  //   returnData.itin = rows;
+  //   conn.query(sqlGetBox, [], function (err, rows) {
+  //     if (err) {
+  //       console.log(JSON.stringify(err));
+  //       return;
+  //     }
+  //     returnData.box = rows;
+  //     res.send(JSON.stringify(returnData));
+  //   });
+  // });
+
+  res.send(`edit: ${itinId}`);
 });
 
 module.exports = router;
