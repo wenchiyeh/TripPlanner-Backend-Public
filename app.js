@@ -12,8 +12,9 @@ var itinRouter = require("./routes/itinerary");
 var tbRouter = require("./routes/travelBuddies");
 var tbmyaccountRouter = require("./routes/tbMyAccount");
 var testRouter = require("./routes/test");
+//memberliao
 var loginRouter = require("./routes/login");
-
+var memberRouter = require("./routes/member");
 //
 var app = express();
 //
@@ -38,7 +39,9 @@ app.use("/itinerary", itinRouter);
 app.use("/travelbuddies", tbRouter);
 app.use("/tbmyaccount", tbmyaccountRouter);
 app.use("/test", testRouter);
+//memberliso
 app.use("/login", loginRouter);
+app.use("/member", memberRouter);
 //
 //
 //
