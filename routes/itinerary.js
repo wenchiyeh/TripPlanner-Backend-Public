@@ -52,8 +52,8 @@ router.get("/", function (req, res, next) {
 });
 
 router.get("/:itinId", function (req, res, next) {
-  let { itinId } = req.itinId;
-  let returnData = [];
+  let itinId = req.params.itinId;
+  let returnData = [{}, {}];
   let sqlGetItin = `select
   member.member_name,
   itinerary.title,
@@ -76,29 +76,29 @@ router.get("/:itinId", function (req, res, next) {
   location,
   lat,
   lng,
-  images,
+  image,
   info
   from spotsbox
   where itinerary_id = ${itinId}
   `;
 
-  // conn.query(sqlGetItin, [], function (err, rows) {
-  //   if (err) {
-  //     console.log(JSON.stringify(err));
-  //     return;
-  //   }
-  //   returnData.itin = rows;
-  //   conn.query(sqlGetBox, [], function (err, rows) {
-  //     if (err) {
-  //       console.log(JSON.stringify(err));
-  //       return;
-  //     }
-  //     returnData.box = rows;
-  //     res.send(JSON.stringify(returnData));
-  //   });
-  // });
+  conn.query(sqlGetItin, [], function (err, rows) {
+    if (err) {
+      console.log(JSON.stringify(err));
+      return;
+    }
+    returnData[0] = rows[0];
+    conn.query(sqlGetBox, [], function (err, rows) {
+      if (err) {
+        console.log(JSON.stringify(err));
+        return;
+      }
+      returnData[1] = rows;
+      res.send(JSON.stringify(returnData));
+    });
+  });
 
-  res.send(`edit: ${itinId}`);
+  // res.send(`edit: ${itinId}`);
 });
 
 module.exports = router;
