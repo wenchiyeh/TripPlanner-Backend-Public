@@ -13,32 +13,15 @@ var conn = mysql.createConnection({
 
 /* GET itinerary listing. */
 router.get("/", function (req, res, next) {
-  let { area = "*", town = "*", day = 1, keyword = "*" } = req.query;
+  //let { email = "*"} = req.query;
 
-  let sqlKey = `select
-  itinerary.id as itin_id,
-  itinerary.title,
-  itinerary.info,
-  itinerary.location,
-  itinerary.duration,
-  itinerary.heart,
-  itinerary.keep,
-  itinerary.member_id as memberId ,
-  member.newsId,
-  member.member_name
-  from itinerary
-  join member on itinerary.member_id = member.newsId
-  where itinerary.id
-  in (select itinerary_id from spotsbox join citycategory on citycategory.city = spotsbox.location join regioncategory on regioncategory.id = citycategory.regionCategory_id where citycategory.city = '${town}' or regioncategory.region = '${area}')
-  `;
+  let sqlKey = `select * from member where valid=1`;
 
-  let handleSql = `select * from itinerary 
-    where publish_time != NULL 
-    and valid=1 
-    and area = ? 
-    and town = ? 
-    and day >= ? 
-    like ?`;
+  let handleSql = `select * from member 
+  where member_sex = 1 
+  and valid=1 
+  and email = ?
+  like ?`;
   //   console.log(handleSql);
   conn.query(sqlKey, [], function (err, rows) {
     //   conn.query(handleSql, [area, town, day, keyword], function (err, rows) {
