@@ -15,7 +15,7 @@ var conn = mysql.createConnection({
 router.get("/", function (req, res, next) {
   let { email = "*"} = req.query;
 
-  let sqlKey = `select * from member where email=? , password=?`;
+  let sqlKey = `select * from member where email =? , password =?`;
   //   console.log(handleSql);
   conn.query(sqlKey, [], function (err, rows) {
     //   conn.query(handleSql, [area, town, day, keyword], function (err, rows) {

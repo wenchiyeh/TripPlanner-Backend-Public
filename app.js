@@ -19,7 +19,8 @@ var testRouter = require("./routes/test");
 var signRouter = require("./routes/sign");
 var loginRouter = require("./routes/login");
 var memberRouter = require("./routes/member");
-//
+//收藏
+var meFavoritesgroupRouter = require("./routes/meFavoritesgroup")
 var app = express();
 //
 //使用環境參數
@@ -51,7 +52,8 @@ app.use("/test", testRouter);
 app.use("/sign", signRouter);
 app.use("/login", loginRouter);
 app.use("/member", memberRouter);
-//
+//收藏
+app.use("/meFavoritesgroup", meFavoritesgroupRouter)
 //
 //
 //資料庫連線
