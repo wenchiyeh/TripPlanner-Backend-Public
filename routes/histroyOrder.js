@@ -27,7 +27,7 @@ router.get(`/`, function (req, res, next) {
     from orderhistory
     join member on orderhistory.userId = member.newsId
     join products on orderhistory.productID = products.id
-    ORDER BY orderhistory.id
+    ORDER BY orderhistory.id DESC
    `
 conn.query(sql,[], function (err, rows) {
     if(err){
