@@ -2,14 +2,16 @@ var express = require("express");
 var router = express.Router();
 //使用環境參數
 require("dotenv").config();
+//
+var mysql = require("mysql");
+var conn = mysql.createConnection({
+  host: process.env["dbhost"],
+  user: process.env["dbuser"],
+  password: process.env["dbpassword"],
+  database: process.env["database"],
+});
 //註冊功能
 router.post('/sign', function(req, res){
-    var conn = mysql.createConnection({
-        host: process.env["dbhost"],
-        user: process.env["dbuser"],
-        password: process.env["dbpassword"],
-        database: process.env["database"],
-      });
     var newmember = new conn({
         email:req.body.email,
         password:req.body.password,
