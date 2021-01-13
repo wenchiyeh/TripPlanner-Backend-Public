@@ -17,15 +17,22 @@ conn.connect(function(err){
 })
 
 router.get(`/`, function (req, res, next) {
-    let sql = `select member.*,
+    let sql = `select travelbuddies.*,
+    member.member_name as tr_membername,
     travelbuddies.themeName as tr_name,
     travelbuddies.dateBegin as tr_datebegin,
     travelbuddies.dateEnd as tr_dataend,
-    travelbuddies.genderNeeded_id as tr_needid
-    from citycategory
-    join travelbuddies on travelbuddies.id = travelbuddies.id
-    join member on travelbuddies.id = member.newsid`
-conn.query(sql,[], function (err, rows) {
+    travelbuddies.genderNeeded_id as tr_needid,
+    citycategory.city as tr_city,
+    regioncategory.region as tr_region
+    from categoryrelations
+    natural join regioncategory
+    natural join citycategory
+    natural join travelbuddies
+    natural join member
+    `
+
+    conn.query(sql,[], function (err, rows) {
     if(err){
         console.log(err);
     }
