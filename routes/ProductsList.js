@@ -18,16 +18,12 @@ conn.connect(function(err){
 
 router.get(`/`, function (req, res, next) {
     let sql  = `SELECT products.*,
-    ticket.ticketName as ticket_Name,
-    ticket.price as ticket_price,
     teacher.name as teacher_name,
     teacher.title as teacher_title,
     teacher.photo as teacher_photo,
     teacher.history as teacher_history
     from products
-    join forticket on products.forTicket = forticket.id
     join teacher on products.teacher_id = teacher.id
-    join ticket on forticket.type = ticket.id
     ORDER BY products.id
    `
 conn.query(sql,[], function (err, rows) {

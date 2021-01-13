@@ -23,13 +23,10 @@ router.get(`/`, function (req, res, next) {
     member.email as user_mail,
     member.member_sex as gender,
     member.member_phone as user_phone,
-    products.className as class_Name,
-    ticket.ticketName as ticket_Name,
-    ticket.price as ticket_price
+    products.className as class_Name
     from orderhistory
     join member on orderhistory.userId = member.newsId
     join products on orderhistory.productID = products.id
-    join ticket on orderhistory.ticketId = ticket.id
     ORDER BY orderhistory.id
    `
 conn.query(sql,[], function (err, rows) {
