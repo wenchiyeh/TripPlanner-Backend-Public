@@ -15,10 +15,10 @@ var conn = mysql.createConnection({
 router.get("/", function (req, res, next) {
   let { email = "*"} = req.query;
 
-  let sqlKey = `select * from member where valid=1`;
+  let sqlKey = `select * from member where newsid=1`;
 
   let handleSql = `select * from member 
-  where valid = 1 
+  where newsid = 1 
   like ?`;
   //   console.log(handleSql);
   conn.query(sqlKey, [], function (err, rows) {
@@ -31,9 +31,29 @@ router.get("/", function (req, res, next) {
   });
 });
 
-router.get("/edit/:itin_id", function (req, res, next) {
-  let itin_id = req.itin_id;
-  res.send(`edit: ${itin_id}`);
-});
+// router.get("/edit/:itin_id", function (req, res, next) {
+//   let itin_id = req.itin_id;
+//   res.send(`edit: ${itin_id}`);
+// });
+// 更新會員資料
+router.put("/update", function (req, res, next) {
+  let sqlKey=" member member_name = ?, valid = ? "
+  conn.beginTransaction
+  res.send("已連線")
+})
+
+// app.put("/edit/:id", function (req, res) {
+//   let sqlKey = `select * from member where newsid=1`;
+// 	conn.query(
+// 		"update news set title = ?, ymd = ? where newsId = " 
+// 		    + req.body.newsId, 
+// 			[
+// 				req.body.member_name,
+// 			]);
+// 	res.send("row updated.");
+// })
+// router.put('/', function (req, res, next) {
+//     res.send(`edit: ${id}`);
+//   });
 
 module.exports = router;
