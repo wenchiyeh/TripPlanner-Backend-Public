@@ -13,7 +13,52 @@ var conn = mysql.createConnection({
 
 /* GET itinerary listing. */
 router.get("/", function (req, res, next) {
-  let { area = "*", town = "*", day = 1, keyword = "*" } = req.query;
+  let { area = "", town = "", day = 0, keyword = "" } = req.query;
+  area = area.replace("全部", "");
+  town = town.replace("全部", "");
+  keyword = keyword.replace(/[\/.,{}\[\]()=*%$#@!&|]/g, "");
+  let dayOption = `and itinerary.duration `;
+  switch (day) {
+    case 0:
+      dayOption = "";
+      break;
+    case 1:
+      dayOption += "= 1";
+      break;
+    case 2:
+      dayOption += "between 2 and 3";
+      break;
+    case 3:
+      dayOption += "between 4 and 5";
+      break;
+    case 4:
+      dayOption += "between 6 and 7";
+      break;
+    case 5:
+      dayOption += "> 7";
+      break;
+  }
+
+  if (area !== "") area = ` regioncategory.region = '${area}' `;
+  if (town !== "") town = ` citycategory.city = '${town}' `;
+  if (keyword !== "") {
+    keyword = ` (spotsbox.title like '%${keyword}%' or spotsbox.info like '%${keyword}%' or itinerary.title like '%${keyword}%' or itinerary.info like '%${keyword}%' )`;
+  }
+
+  let filter = [area, town, keyword];
+  let filterStr = "";
+  let handleFilter = "";
+  filter.forEach((ele) => {
+    if (ele == "") return;
+    filterStr += ` and ${ele}`;
+  });
+  handleFilter = `
+  itinerary.id in (
+    select itinerary_id from spotsbox 
+    join citycategory on citycategory.city = spotsbox.location 
+    join regioncategory on regioncategory.id = citycategory.regionCategory_id 
+    join itinerary on itinerary.id = spotsbox.itinerary_id  
+    where spotsbox.valid = 1 ${filterStr} )`;
 
   let sqlGetFilterList = `select
   itinerary.id as itin_id,
@@ -23,14 +68,18 @@ router.get("/", function (req, res, next) {
   itinerary.duration,
   itinerary.heart,
   itinerary.keep,
+  itinerary.image,
   itinerary.member_id as memberId ,
   member.newsId,
-  member.member_name
+  member.member_name,
+  member.member_id as nickname
   from itinerary
   join member on itinerary.member_id = member.newsId
-  where itinerary.id
-  in (select itinerary_id from spotsbox join citycategory on citycategory.city = spotsbox.location join regioncategory on regioncategory.id = citycategory.regionCategory_id where citycategory.city = '${town}' or regioncategory.region = '${area}')
-  `;
+  where `;
+
+  area === "" && town === "" && day === 0 && keyword === ""
+    ? (sqlGetFilterList += `itinerary.valid = 1`)
+    : (sqlGetFilterList += handleFilter);
 
   // let handleSql = `select * from itinerary
   //   where publish_time != NULL
