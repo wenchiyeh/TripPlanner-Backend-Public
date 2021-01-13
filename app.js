@@ -12,7 +12,7 @@ var itinRouter = require("./routes/itinerary");
 var tbRouter = require("./routes/travelBuddies");
 
 var roRouter = require("./routes/histroyOrder");
-
+var buRouter = require("./routes/buyProducts")
 var tbmyaccountRouter = require("./routes/tbMyAccount");
 var testRouter = require("./routes/test");
 
@@ -39,6 +39,7 @@ app.use("/users", usersRouter);
 app.use("/itinerary", itinRouter);
 app.use("/travelbuddies", tbRouter);
 
+app.use("/buy", buRouter)
 app.use("/historyOrder", roRouter);
 
 app.use("/tbmyaccount", tbmyaccountRouter);
