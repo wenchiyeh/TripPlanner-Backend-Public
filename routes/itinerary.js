@@ -58,15 +58,16 @@ router.get("/", function (req, res, next) {
 });
 
 router.get("/:itinId", function (req, res, next) {
-  let { itinId } = req.itinId;
-  let returnData = [];
+  let itinId = req.params.itinId;
+  let returnData = [{}, {}];
   let sqlGetItin = `select
   member.member_name,
+  itinerary.member_id,
   itinerary.title,
   itinerary.duration,
   itinerary.publish_time,
   itinerary.heart,
-  itinerary.keep,
+  itinerary.keep, 
   itinerary.view,
   itinerary.info
   from itinerary
@@ -74,37 +75,52 @@ router.get("/:itinId", function (req, res, next) {
   where itinerary.id = ${itinId}
   `;
   let sqlGetBox = `select
-  day,
-  box_order,
-  type,
-  title,
-  begin,
-  location,
-  lat,
-  lng,
-  images,
-  info
+  spotsbox.day,
+  spotsbox.box_order,
+  spotsbox.type,
+  spotsbox.title,
+  spotsbox.begin,
+  regioncategory.region,
+  spotsbox.location,
+  spotsbox.lat,
+  spotsbox.lng,
+  spotsbox.image,
+  spotsbox.info
   from spotsbox
+  join citycategory on citycategory.city = spotsbox.location
+  join regioncategory on regioncategory.id = citycategory.regionCategory_id
   where itinerary_id = ${itinId}
   `;
 
-  // conn.query(sqlGetItin, [], function (err, rows) {
-  //   if (err) {
-  //     console.log(JSON.stringify(err));
-  //     return;
-  //   }
-  //   returnData.itin = rows;
-  //   conn.query(sqlGetBox, [], function (err, rows) {
-  //     if (err) {
-  //       console.log(JSON.stringify(err));
-  //       return;
-  //     }
-  //     returnData.box = rows;
-  //     res.send(JSON.stringify(returnData));
-  //   });
-  // });
+  conn.query(sqlGetItin, [], function (err, rows) {
+    if (err) {
+      console.log(JSON.stringify(err));
+      return;
+    }
+    if (rows.length === 0) {
+      res.send(JSON.stringify(rows));
+      return;
+    }
+    returnData[0] = rows[0];
+    let days = rows[0].duration;
+    conn.query(sqlGetBox, [], function (err, rows) {
+      if (err) {
+        console.log(JSON.stringify(err));
+        return;
+      }
+      let handleRow = [];
+      for (let i = 0; i < days; ++i) {
+        handleRow.push({ title: `第 ${i + 1} 日`, data: [] });
+      }
+      rows.forEach((element) => {
+        handleRow[element.day].data.push(element);
+      });
+      returnData[1] = handleRow;
+      res.send(JSON.stringify(returnData));
+    });
+  });
 
-  res.send(`edit: ${itinId}`);
+  // res.send(`edit: ${itinId}`);
 });
 
 module.exports = router;
