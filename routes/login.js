@@ -20,17 +20,14 @@ router.post("/", function (req, res, next) {
       console.log(JSON.stringify(err));
       return;
     }
-    res.send(JSON.stringify(rows));
+    if(rows.length > 0){
+      console.log(rows[0].newsId);
+      let returnData = {result : true, member : rows[0].newsId}
+      res.send(JSON.stringify(returnData));
+    }else{
+      res.send(JSON.stringify({result : false}));
+    }
   });
 });
-router.post("/", (req, res) => {
-  var userEmail = req.body.txtID
-  if (userEmail == "123@gmail.com") {
-      req.session.userEmail = userEmail
-      res.redirect("/")
-  } else {
-      res.render("login", { who: userEmail })
-  }
-})
 
 module.exports = router;
