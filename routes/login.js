@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 //使用環境參數
 require("dotenv").config();
-//
+
 var mysql = require("mysql");
 var conn = mysql.createConnection({
   host: process.env["dbhost"],
@@ -11,14 +11,11 @@ var conn = mysql.createConnection({
   database: process.env["database"],
 });
 
-/* GET itinerary listing. */
-router.get("/", function (req, res, next) {
-  let { email = "*"} = req.query;
-
-  let sqlKey = `select * from member where email =? , password =?`;
-  //   console.log(handleSql);
+router.post("/", function (req, res, next) {
+  console.log(req.body)
+  //驗證用戶是否存在
+  let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}'`;
   conn.query(sqlKey, [], function (err, rows) {
-    //   conn.query(handleSql, [area, town, day, keyword], function (err, rows) {
     if (err) {
       console.log(JSON.stringify(err));
       return;
@@ -26,10 +23,14 @@ router.get("/", function (req, res, next) {
     res.send(JSON.stringify(rows));
   });
 });
-
-router.get("/edit/:itin_id", function (req, res, next) {
-  let itin_id = req.itin_id;
-  res.send(`edit: ${itin_id}`);
-});
+router.post("/", (req, res) => {
+  var userEmail = req.body.txtID
+  if (userEmail == "123@gmail.com") {
+      req.session.userEmail = userEmail
+      res.redirect("/")
+  } else {
+      res.render("login", { who: userEmail })
+  }
+})
 
 module.exports = router;

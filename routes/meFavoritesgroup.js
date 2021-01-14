@@ -25,7 +25,7 @@ router.get(`/`, function (req, res, next) {
     travelbuddies.genderNeeded_id as tr_needid,
     citycategory.city as tr_city,
     regioncategory.region as tr_region
-    from categoryrelations
+    from ticket
     natural join regioncategory
     natural join citycategory
     natural join travelbuddies
