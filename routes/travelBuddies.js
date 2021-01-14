@@ -79,9 +79,10 @@ router.put("/update", function (req, res, next) {
 })
 
 
-router.delete("/hahaha", function (req, res, next) {
-    let sql1="DELETE FROM travelbuddies WHERE id=20 "
-    let sql2="DELETE FROM categoryrelations WHERE travelBuddies_id=20"
+router.delete("/", function (req, res, next) {
+    let id = req.body.tb_id
+    let sql1="DELETE FROM travelbuddies WHERE id= id "
+    let sql2="DELETE FROM categoryrelations WHERE travelBuddies_id= id"
     conn.beginTransaction(function(err){
         if(err){
             console.log(err)
@@ -105,7 +106,7 @@ router.delete("/hahaha", function (req, res, next) {
                       });
                     }
                     console.log('Transaction Completed Successfully.');
-                    connection.end();
+                    conn.end();
                   });
                 });
               });
