@@ -13,16 +13,12 @@ var conn = mysql.createConnection({
 
 /* GET itinerary listing. */
 router.get("/", function (req, res, next) {
-  let { email = "*"} = req.query;
+  let { id = "*"} = req.query;
 
-  let sqlKey = `select * from member where newsid=1`;
-
-  let handleSql = `select * from member 
-  where newsid = 1 
-  like ?`;
-  //   console.log(handleSql);
-  conn.query(sqlKey, [], function (err, rows) {
-    //   conn.query(handleSql, [area, town, day, keyword], function (err, rows) {
+  //let sqlKey = `select * from member where newsid=1`;
+  //let sqlKey = `select member.* from member`
+  let sqlKey = `select * from member where email ='${req.body.email}' or newsId='${id}'`
+   conn.query(sqlKey, [], function (err, rows) {
     if (err) {
       console.log(JSON.stringify(err));
       return;
@@ -30,30 +26,27 @@ router.get("/", function (req, res, next) {
     res.send(JSON.stringify(rows));
   });
 });
-
-// router.get("/edit/:itin_id", function (req, res, next) {
-//   let itin_id = req.itin_id;
-//   res.send(`edit: ${itin_id}`);
-// });
 // 更新會員資料
-router.put("/update", function (req, res, next) {
-  let sqlKey=" member member_name = ?, valid = ? "
-  conn.beginTransaction
-  res.send("已連線")
-})
-
-// app.put("/edit/:id", function (req, res) {
-//   let sqlKey = `select * from member where newsid=1`;
-// 	conn.query(
-// 		"update news set title = ?, ymd = ? where newsId = " 
-// 		    + req.body.newsId, 
-// 			[
-// 				req.body.member_name,
-// 			]);
-// 	res.send("row updated.");
+//let sqlKey=" member member_name = ?, valid = ? "
+router.get("/:id", function (req, res, next) {
+  console.log(req.body)
+  //let sqlKey = `select * from member where email ='${req.body.email}'`
+  let sqlKey = `select member.* from member`
+conn.query(sql,[], function (err, rows) {
+  if(err){
+      console.log(err);
+  }
+      res.send(JSON.stringify(rows));
+      });
+  
+});
+//找會員
+// router.get("/:id", function (req, res, next) {
+//   let id = req.body.email;
+//   console.log(req.body)
+//   let sqlKey = `select * from member where email ='${req.body.email}'`
+//   conn.beginTransaction
+//   res.send("已連線")
 // })
-// router.put('/', function (req, res, next) {
-//     res.send(`edit: ${id}`);
-//   });
 
 module.exports = router;
