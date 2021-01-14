@@ -24,7 +24,7 @@ router.get(`/`, function (req, res, next) {
     teacher.history as teacher_history
     from products
     join teacher on products.teacher_id = teacher.id
-    ORDER BY products.id
+ ORDER BY products.id
    `
 conn.query(sql,[], function (err, rows) {
     if(err){
