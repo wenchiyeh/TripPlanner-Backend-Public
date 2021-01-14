@@ -10,10 +10,17 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var itinRouter = require("./routes/itinerary");
 var tbRouter = require("./routes/travelBuddies");
+
+var roRouter = require("./routes/histroyOrder");
+var buRouter = require("./routes/ProductsList")
 var tbmyaccountRouter = require("./routes/tbMyAccount");
 var testRouter = require("./routes/test");
-
-//
+//memberliao
+var signRouter = require("./routes/sign");
+var loginRouter = require("./routes/login");
+var memberRouter = require("./routes/member");
+//收藏
+var meFavoritesgroupRouter = require("./routes/meFavoritesgroup")
 var app = express();
 //
 //使用環境參數
@@ -35,9 +42,18 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/itinerary", itinRouter);
 app.use("/travelbuddies", tbRouter);
+
+app.use("/productList", buRouter)
+app.use("/historyOrder", roRouter);
+
 app.use("/tbmyaccount", tbmyaccountRouter);
 app.use("/test", testRouter);
-//
+//memberliso
+app.use("/sign", signRouter);
+app.use("/login", loginRouter);
+app.use("/member", memberRouter);
+//收藏
+app.use("/meFavoritesgroup", meFavoritesgroupRouter)
 //
 //
 //資料庫連線
@@ -55,6 +71,30 @@ app.post("/upload", function (req, res) {
   let test = "ok";
   res.send(JSON.stringify(test));
 });
+//更新會員資料
+// app.update = (req, res) => {
+//   const id = req.params.id;
+
+//   Tutorial.update(req.body, {
+//     where: { id: id }
+//   })
+//     .then(num => {
+//       if (num == 1) {
+//         res.send({
+//           message: "Tutorial was updated successfully."
+//         });
+//       } else {
+//         res.send({
+//           message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`
+//         });
+//       }
+//     })
+//     .catch(err => {
+//       res.status(500).send({
+//         message: "Error updating Tutorial with id=" + id
+//       });
+//     });
+// };
 //測試用
 app.get("/member/:id", function (req, res) {
   conn.query(
