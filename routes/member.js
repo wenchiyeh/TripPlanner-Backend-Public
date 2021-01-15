@@ -13,11 +13,11 @@ var conn = mysql.createConnection({
 
 /* GET itinerary listing. */
 router.get("/", function (req, res, next) {
-  let { id = "*"} = req.query;
-
+  let { id = "*"} = req.body;
+  console.log(req.body)
   //let sqlKey = `select * from member where newsid=1`;
   //let sqlKey = `select member.* from member`
-  let sqlKey = `select * from member where email ='${req.body.email}' or newsId='${id}'`
+  let sqlKey = `select * from member where email ='${req.body.email}' or id='${id}'`
    conn.query(sqlKey, [], function (err, rows) {
     if (err) {
       console.log(JSON.stringify(err));
@@ -29,10 +29,10 @@ router.get("/", function (req, res, next) {
 // 更新會員資料
 //let sqlKey=" member member_name = ?, valid = ? "
 router.get("/:id", function (req, res, next) {
-  console.log(req.body)
+  console.log(req.params.id)
   //let sqlKey = `select * from member where email ='${req.body.email}'`
-  let sqlKey = `select member.* from member`
-conn.query(sql,[], function (err, rows) {
+  let sqlKey = `select * from member where id=${req.params.id}`
+conn.query(sqlKey,[], function (err, rows) {
   if(err){
       console.log(err);
   }
