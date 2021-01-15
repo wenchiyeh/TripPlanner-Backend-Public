@@ -64,8 +64,17 @@ conn.query(sqlKey,[], function (err, rows) {
 router.put("/:id", function (req, res, next) {
   console.log(req.body.id)
 
+  // let sqlKey = `update member set 
+  // email='${req.body.email}', password='${req.body.password}' where id='${id}'`;
   let sqlKey = `update member set 
-  email='${req.body.email}', password='${req.body.password}' where id='${id}'`;
+    email='${req.body.email}', 
+    password='${req.body.password}', 
+    member_name='${req.body.member_name}',  
+    member_phone='${req.body.member_phone}',  
+    birthday='${req.body.birthday}', 
+    member_sex='${req.body.member_sex}',
+    member_id='${req.body.member_id}',
+    member_aboutme='${req.body.member_aboutme}' where id='${req.body.id}'`;
 conn.query(sqlKey,[], function (err, rows) {
   if(err){
       console.log(err);
