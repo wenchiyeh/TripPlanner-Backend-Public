@@ -66,6 +66,7 @@ router.get("/", function (req, res, next) {
   itinerary.info,
   itinerary.location,
   itinerary.duration,
+  itinerary.publish_time,
   itinerary.heart,
   itinerary.keep,
   itinerary.image,
@@ -75,7 +76,7 @@ router.get("/", function (req, res, next) {
   member.member_id as nickname
   from itinerary
   join member on itinerary.member_id = member.newsId
-  where `;
+  where itinerary.publish_time != 'null' and `;
 
   area === "" && town === "" && day === 0 && keyword === ""
     ? (sqlGetFilterList += `itinerary.valid = 1`)
