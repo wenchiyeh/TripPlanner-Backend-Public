@@ -41,9 +41,16 @@ conn.query(sqlKey,[], function (err, rows) {
   
 });
 // 更新會員資料
-router.put("/", function (req, res, next) {
+router.put("/:id", function (req, res, next) {
   console.log(req.body.id)
-  let sqlKey = `update member set email='${req.body.email}' where id = ${req.body.id}`;
+  let sqlKey = `update member set email='${req.body.email}',
+      password='${req.body.password}' where id = ${req.body.id}`;
+      // member_name='${req.body.member_name}',
+      // member_phone='${req.body.member_phone}',
+      // birthday='${req.body.birthday}',
+      // member_sex='${req.body.member_sex}',
+      // member_id='${req.body.member_id}',
+      // member_aboutme='${req.body.member_aboutme}' 
 conn.query(sqlKey,[], function (err, rows) {
   if(err){
       console.log(err);
@@ -53,16 +60,16 @@ conn.query(sqlKey,[], function (err, rows) {
   
 });
 
-router.put("/:id", function (req, res, next) {
-  console.log(req.params.id)
-  let sqlKey = `update member set email=${req.params.email}, password=${req.params.password} and where id =${req.params.id}`;
-conn.query(sqlKey,[], function (err, rows) {
-  if(err){
-      console.log(err);
-  }
-      res.send(JSON.stringify(rows));
-      });
+// router.put("/:id", function (req, res, next) {
+//   console.log(req.params.id)
+//   let sqlKey = `update member set email=${req.params.email}, password=${req.params.password} and where id =${req.params.id}`;
+// conn.query(sqlKey,[], function (err, rows) {
+//   if(err){
+//       console.log(err);
+//   }
+//       res.send(JSON.stringify(rows));
+//       });
   
-});
+// });
 
 module.exports = router;
