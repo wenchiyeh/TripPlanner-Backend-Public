@@ -57,8 +57,7 @@ conn.query(sql,[], function (err, rows) {
 
 router.get(`/car1/:id`, function (req, res, next) {
   let productId = req.params.id;
-  console.log("hi");
-  let sql = `SELECT products.className
+  let sql = `SELECT products.*
     from products
     where products.id = ${productId}
    `;
@@ -69,6 +68,7 @@ router.get(`/car1/:id`, function (req, res, next) {
     res.send(JSON.stringify(rows));
   });
 });
+
 
 
 module.exports  =  router;
