@@ -22,8 +22,8 @@ router.post("/", function (req, res, next) {
         return;
       }
       if(rows.length >= 1){
-        console.log(rows[0].newsId);
-        let returnData = {result : true, member : rows[0].newsId}
+        console.log(rows[0].id);
+        let returnData = {result : true, member : rows[0].id}
         res.send(JSON.stringify(returnData));
       }else{
         res.send(JSON.stringify({result : false}));
