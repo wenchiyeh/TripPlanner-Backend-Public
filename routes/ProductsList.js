@@ -58,13 +58,8 @@ conn.query(sql,[], function (err, rows) {
 router.get(`/car1/:id`, function (req, res, next) {
   let productId = req.params.id;
   console.log("hi");
-  let sql = `SELECT products.*,
-    teacher.name as teacher_name,
-    teacher.title as teacher_title,
-    teacher.photo as teacher_photo,
-    teacher.history as teacher_history
+  let sql = `SELECT products.className
     from products
-    join teacher on products.teacher_id = teacher.id
     where products.id = ${productId}
    `;
   conn.query(sql, [], function (err, rows) {
