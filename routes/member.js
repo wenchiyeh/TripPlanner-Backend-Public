@@ -11,18 +11,14 @@ var conn = mysql.createConnection({
   database: process.env["database"],
 });
 
-/* GET itinerary listing. */
+//找出會員
 router.get("/", function (req, res, next) {
-  let { email = "*"} = req.query;
-
-  let sqlKey = `select * from member where newsid=1`;
-
-  let handleSql = `select * from member 
-  where newsid = 1 
-  like ?`;
-  //   console.log(handleSql);
-  conn.query(sqlKey, [], function (err, rows) {
-    //   conn.query(handleSql, [area, town, day, keyword], function (err, rows) {
+  let { id = "*"} = req.body;
+  console.log(req.body)
+  //let sqlKey = `select * from member where newsid=1`;
+  //let sqlKey = `select member.* from member`
+  let sqlKey = `select * from member where email ='${req.body.email}' or id='${req.body.id}'`
+   conn.query(sqlKey, [], function (err, rows) {
     if (err) {
       console.log(JSON.stringify(err));
       return;
@@ -31,29 +27,42 @@ router.get("/", function (req, res, next) {
   });
 });
 
-// router.get("/edit/:itin_id", function (req, res, next) {
-//   let itin_id = req.itin_id;
-//   res.send(`edit: ${itin_id}`);
-// });
+//let sqlKey=" member member_name = ?, valid = ? "
+router.get("/:id", function (req, res, next) {
+  console.log(req.params.id)
+  //let sqlKey = `select * from member where email ='${req.body.email}'`
+  let sqlKey = `select * from member where id=${req.params.id}`
+conn.query(sqlKey,[], function (err, rows) {
+  if(err){
+      console.log(err);
+  }
+      res.send(JSON.stringify(rows));
+      });
+  
+});
 // 更新會員資料
-router.put("/update", function (req, res, next) {
-  let sqlKey=" member member_name = ?, valid = ? "
-  conn.beginTransaction
-  res.send("已連線")
-})
+router.put("/", function (req, res, next) {
+  console.log(req.body.id)
+  let sqlKey = `update member set email='${req.body.email}' where id = ${req.body.id}`;
+conn.query(sqlKey,[], function (err, rows) {
+  if(err){
+      console.log(err);
+  }
+      res.send(JSON.stringify(rows));
+      });
+  
+});
 
-// app.put("/edit/:id", function (req, res) {
-//   let sqlKey = `select * from member where newsid=1`;
-// 	conn.query(
-// 		"update news set title = ?, ymd = ? where newsId = " 
-// 		    + req.body.newsId, 
-// 			[
-// 				req.body.member_name,
-// 			]);
-// 	res.send("row updated.");
-// })
-// router.put('/', function (req, res, next) {
-//     res.send(`edit: ${id}`);
-//   });
+router.put("/:id", function (req, res, next) {
+  console.log(req.params.id)
+  let sqlKey = `update member set email=${req.params.email}, password=${req.params.password} and where id =${req.params.id}`;
+conn.query(sqlKey,[], function (err, rows) {
+  if(err){
+      console.log(err);
+  }
+      res.send(JSON.stringify(rows));
+      });
+  
+});
 
 module.exports = router;
