@@ -13,11 +13,20 @@ var conn = mysql.createConnection({
 
 //找出會員
 router.get("/", function (req, res, next) {
-  let { id = "*"} = req.body;
+  let { id = "*" } = req.body;
   console.log(req.body)
   //let sqlKey = `select * from member where newsid=1`;
   //let sqlKey = `select member.* from member`
-  let sqlKey = `select * from member where email ='${req.body.email}' or id='${req.body.id}'`
+  let sqlKey = `select * from member where email ='${req.body.email}' 
+  or id='${req.body.id}'
+  or password='${req.body.password}', 
+  or member_name='${req.body.member_name}',  
+  or member_phone='${req.body.member_phone}',  
+  or birthday='${req.body.birthday}', 
+  or member_sex='${req.body.member_sex}',
+  or member_id='${req.body.member_id}',
+  or member_aboutme='${req.body.member_aboutme}'
+  `;
    conn.query(sqlKey, [], function (err, rows) {
     if (err) {
       console.log(JSON.stringify(err));
@@ -46,7 +55,7 @@ router.put("/", function (req, res, next) {
   let sqlKey = `update member set 
     email='${req.body.email}', 
     password='${req.body.password}', 
-    membername='${req.body.membername}',  
+    member_name='${req.body.member_name}',  
     member_phone='${req.body.member_phone}',  
     birthday='${req.body.birthday}', 
     member_sex='${req.body.member_sex}',
@@ -69,7 +78,7 @@ router.put("/:id", function (req, res, next) {
   let sqlKey = `update member set 
     email='${req.body.email}', 
     password='${req.body.password}', 
-    membername='${req.body.membername}',  
+    member_name='${req.body.member_name}',  
     member_phone='${req.body.member_phone}',  
     birthday='${req.body.birthday}', 
     member_sex='${req.body.member_sex}',
