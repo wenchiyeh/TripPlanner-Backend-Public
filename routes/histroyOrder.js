@@ -37,6 +37,30 @@ conn.query(sql,[], function (err, rows) {
         });
     
 });
+router.get(`/:id`, function (req, res, next) {
+     let orderId = req.params.id;
+    let sql  = `SELECT orderhistory.*,
+    member.member_name as user_Name,
+    member.birthday as user_birthday,
+    member.email as user_mail,
+    member.member_sex as gender,
+    member.member_phone as user_phone,
+    products.className as class_Name
+    from orderhistory
+    join member on orderhistory.userId = member.newsId
+    join products on orderhistory.productID = products.id
+    where orderhistory.id = ${orderId}
+    ORDER BY orderhistory.id DESC
+   `
+conn.query(sql,[], function (err, rows) {
+    if(err){
+        console.log(err);
+    }
+        res.send(JSON.stringify(rows));
+        });
+    
+});
+
 
 // router.post(`/create`, function (req, res, next) {
 //     let sql1 = `INSERT INTO travelbuddies themeName = ?,
