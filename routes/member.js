@@ -41,7 +41,7 @@ router.post("/:id", function (req, res, next) {
 
   let {newsId = "*"} = req.body
   //驗證用戶是否存在
-  let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}' and valid =1`;
+  let sqlKey = `select * from member where valid =1`;
   //這樣寫才對
   const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
