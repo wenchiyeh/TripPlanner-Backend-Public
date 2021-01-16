@@ -12,13 +12,13 @@ var conn = mysql.createConnection({
 });
 
 //會員資料
-router.post("/", function (req, res, next) {
+router.get("/", function (req, res, next) {
   //驗證用戶是否存在
   let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}' and valid =1`;
   //這樣寫才對
   const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
-  console.log(obj);
+  console.log('/',obj);
   
   conn.query(sqlKey, [], function (err, rows) {
     if (err) {
@@ -30,22 +30,22 @@ router.post("/", function (req, res, next) {
       console.log(rows[0].newsId);
       let returnData = {result : true, member : rows[0].newsId}
       res.send(JSON.stringify(returnData));
-      console.log('有資料');
+      console.log('有資料', returnData);
     }else{
       res.send(JSON.stringify({result : false}));
     }
   });
 });
 
-router.post("/:id", function (req, res, next) {
+router.get("/:id", function (req, res, next) {
 
-  let {newsId = "*"} = req.body
+  let { id: newsId = "*"} = req.params
   //驗證用戶是否存在
-  let sqlKey = `select * from member where valid =1`;
+  let sqlKey = `select * from member where newsId=${newsId} and valid=1`;
   //這樣寫才對
   const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
-  console.log(obj);
+  console.log('/:id',req.params, obj);
   
   conn.query(sqlKey, [], function (err, rows) {
     if (err) {
@@ -54,10 +54,10 @@ router.post("/:id", function (req, res, next) {
       return;
     }
     if(rows.length > 0){
-      console.log(rows.email);
-      let returnData = {result : true, member : rows.email}
+      console.log('result', rows);
+      let returnData = {result : true, member : rows}
       res.send(JSON.stringify(returnData));
-      console.log('有資料');
+      console.log('有資料', returnData);
     }else{
       res.send(JSON.stringify({result : false}));
     }
