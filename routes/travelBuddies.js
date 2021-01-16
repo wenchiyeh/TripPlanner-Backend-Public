@@ -16,6 +16,7 @@ conn.connect(function(err){
     }
 })
 
+//所有揪團資料
 router.get("/", function (req, res, next) {
     let sql ="SELECT travelbuddies.id, member.member_name AS tb_owner, member.member_photo_id AS tb_memberphoto, travelbuddies.themeName AS tb_themeName, travelbuddies.themePhoto AS tb_themePhoto,travelbuddies.personsNeeded AS tb_personsNeeded, travelbuddies.genderNeeded AS tb_genderNeeded, travelbuddies.estimatedCost AS tb_estimatedCost, travelbuddies.lastApprovedDate AS tb_lastApprovedDate, travelbuddies.dateBegin AS tb_dateBegin , travelbuddies.dateEnd AS tb_dateEnd, daysCategory.daysCategory AS tb_daysCategory, GROUP_CONCAT(DISTINCT regionCategory.region ORDER BY regionCategory.id) AS tb_region ,GROUP_CONCAT(DISTINCT cityCategory.city ORDER BY cityCategory.id) AS tb_city,  travelBuddies.themeintro AS tb_themeIntro FROM travelbuddies JOIN member ON travelbuddies.owner_id=member.newsId JOIN categoryRelations ON categoryRelations. travelBuddies_id=travelbuddies.id JOIN cityCategory ON categoryRelations.cityCategory_id=cityCategory.id JOIN regionCategory ON cityCategory.regionCategory_id=regionCategory.id JOIN dayscategory ON travelbuddies.daysCategory_id=daysCategory.id GROUP BY travelBuddies.themeName ORDER BY travelBuddies.id;"
 conn.query(sql,[], function (err, rows) {
@@ -26,8 +27,44 @@ conn.query(sql,[], function (err, rows) {
         });
     
 });
-//上面這隻ok
 
+
+// router.get("/membersselect", function (req, res, next) {
+//     let sql = "SELECT memberssignedup.membersStatus AS membersStatus, memberssignedup.members_id AS memberSignedUpId,member.member_photo_id AS memberPhoto, member.member_name AS memberName FROM memberssignedup JOIN member ON memberssignedup.members_id=member.newsId JOIN travelBuddies ON memberssignedup.travelBuddies_id =travelBuddies.id WHERE travelBuddies.owner_id=1"       
+//     conn.query(sql,[],function(err, rows) {
+//         if(err){
+//             console.log(err);
+//         }
+//         res.send(JSON.stringify(rows));
+//             });
+//         });
+
+  //把報名揪團者叫出來      
+router.get("/membersselect/:id", function (req, res, next) {
+    let tb_id = req.params.id
+    let sql = "SELECT memberssignedup.membersStatus AS membersStatus, memberssignedup.members_id AS memberSignedUpId,member.member_photo_id AS memberPhoto, member.member_name AS memberName FROM memberssignedup JOIN member ON memberssignedup.members_id=member.newsId JOIN travelBuddies ON memberssignedup.travelBuddies_id =travelBuddies.id WHERE travelBuddies.owner_id=1 AND travelBuddies_id=?"       
+    conn.query(sql,[tb_id],function(err, rows) {
+        if(err){
+            console.log(err);
+        }
+        res.send(JSON.stringify(rows));
+            });
+        });
+
+
+//選擇成員用的更新api
+router.put("/membersselect/:id", function (req, res, next) {
+            let tb_id = req.params.id
+            let sql = "UPDATE memberssignedup SET membersStatus = ? JOIN member ON memberssignedup.members_id=member.newsId WHERE member=?"       
+            conn.query(sql,[參與中],function(err, rows) {
+                if(err){
+                    console.log(err);
+                }
+                res.send(JSON.stringify(rows));
+                    });
+                });
+
+// 選擇揪團資料by每一筆                
 router.get("/:id", function (req, res, next) {
     let tb_id = req.params.id
     let sql ="SELECT travelbuddies.id, member.member_name AS tb_owner, member.member_photo_id AS tb_memberphoto,travelbuddies.themeName AS tb_themeName, travelbuddies.themePhoto AS tb_themePhoto,travelbuddies.personsNeeded AS tb_personsNeeded, travelbuddies.genderNeeded AS tb_genderNeeded, travelbuddies.estimatedCost AS tb_estimatedCost, travelbuddies.lastApprovedDate AS tb_lastApprovedDate, travelbuddies.dateBegin AS tb_dateBegin , travelbuddies.dateEnd AS tb_dateEnd, daysCategory.daysCategory AS tb_daysCategory, GROUP_CONCAT(DISTINCT regionCategory.region ORDER BY regionCategory.id) AS tb_region ,GROUP_CONCAT(DISTINCT cityCategory.city ORDER BY cityCategory.id) AS tb_city,  travelBuddies.themeintro AS tb_themeIntro FROM travelbuddies JOIN member ON travelbuddies.owner_id=member.newsId JOIN categoryRelations ON categoryRelations. travelBuddies_id=travelbuddies.id JOIN cityCategory ON categoryRelations.cityCategory_id=cityCategory.id JOIN regionCategory ON cityCategory.regionCategory_id=regionCategory.id JOIN dayscategory ON travelbuddies.daysCategory_id=daysCategory.id WHERE travelbuddies.id=? GROUP BY travelBuddies.themeName ORDER BY travelBuddies.id;"
@@ -39,9 +76,9 @@ conn.query(sql,tb_id, function (err, rows) {
         });
     
 });
-//上面這隻ok
 
 
+//新增揪團
 router.post("/", function (req, res, next) {
     let sql1="INSERT INTO travelbuddies themeName = ?, owner_id = ?, themePhoto = ?, dateBegin = ?, dateEnd = ?, daysCategory_id = ?, lastApprovedDate = ?, personNeeded = ?, genderNeeded = ?, estimatedCost = ?, themeIntro = ?, valid = ? "
     let sql2="SELECT cityCategory.regionCategory_id FROM cityCategory WHERE cityCategory.id= ?"
@@ -174,6 +211,7 @@ router.put("/:id", function (req, res, next) {
 })
 
 
+//刪除揪團，目前確定mine可以用
 router.delete("/:id", function (req, res, next) {
     let tb_id = req.params.id
     let sql1="DELETE FROM travelbuddies WHERE id= ? "
@@ -201,24 +239,51 @@ router.delete("/:id", function (req, res, next) {
                       });
                     }
                     console.log('Transaction Completed Successfully.');
-                    conn.end();
                   });
                 });
               });
             });
-    res.send("已刪除")
+    res.send('{"message":"已刪除"}')
 })
-//上面這隻ok
 
-router.post("/tbsignedup:id", function (req, res, next) {
+//取消參加的揪團，從上面那隻改
+router.delete("/tbjoined/:id", function (req, res, next) {
     let tb_id = req.params.id
+    let sql1="DELETE FROM memberssignedup WHERE travelBuddies_id= ? "
+    conn.beginTransaction(function(err){
+        if(err){
+            console.log(err)
+        }
+        conn.query(sql1,tb_id,function(err, result) {
+            if (err) { 
+              conn.rollback(function() {
+                console.log(err)
+              });
+            }
+                conn.commit(function(err) {
+                    if (err) { 
+                      conn.rollback(function() {
+                          console.log(err)
+                      });
+                    }
+                    console.log('Transaction Completed Successfully.');
+                });
+              });
+            });
+    res.send('{"message":"已取消參加"}')
+})
+
+//報名
+router.post("/111", function (req, res, next) {
+    let tb_id = req.body.id
+    console.log(tb_id)
     let time = GetDate()
     let sql = "INSERT INTO memberssignedup travelBuddies_id=?, members_id=?, membersStatus=? SignedUpTime=?"
     conn.query(sql,[tb_id,1,"審核中", time], function (err, rows) {
         if(err){
             console.log(err);
         }
-            res.send("ok!");
+            res.send('{"message":"已報名"}');
             });
         });
 
@@ -228,7 +293,7 @@ router.put("/tbsignedup", function (req, res, next) {
                 if(err){
                     console.log(err);
                 }
-                    res.send("ok!");
+                    res.send('{"message":"已報名"}');
                     });
                 });
 
@@ -243,15 +308,7 @@ router.delete("/tbsignedup:id", function (req, res, next) {
             });
         });
 
-        router.get("/tbmembersselect", function (req, res, next) {
-            let sql = "SELECT member.member_photo_id AS memberPhoto, member.member_name AS memberName FROM memberssingedup JOIN member ON memberssingedup.members_id=member.id WHERE travelBuddies_id=1"       
-            conn.query(sql,[],function(err, rows) {
-                if(err){
-                    console.log(err);
-                }
-                    res.send("readtbmembersselect");
-                    });
-                });
+        
 
 
 module.exports = router;
