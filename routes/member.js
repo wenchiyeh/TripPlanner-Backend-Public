@@ -11,28 +11,59 @@ var conn = mysql.createConnection({
   database: process.env["database"],
 });
 
-//找出會員
+//會員資料
 router.post("/", function (req, res, next) {
-  console.log('1');
   //驗證用戶是否存在
-  let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}'`;
+  let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}' and valid =1`;
   //這樣寫才對
   const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
   console.log(obj);
+  
   conn.query(sqlKey, [], function (err, rows) {
     if (err) {
       console.log(JSON.stringify(err));
+      console.log('錯誤!');
       return;
     }
     if(rows.length > 0){
       console.log(rows[0].newsId);
       let returnData = {result : true, member : rows[0].newsId}
       res.send(JSON.stringify(returnData));
+      console.log('有資料');
     }else{
       res.send(JSON.stringify({result : false}));
     }
   });
+});
+
+router.post("/:id", function (req, res, next) {
+
+  let {newsId = "*"} = req.body
+  //驗證用戶是否存在
+  let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}' and valid =1`;
+  //這樣寫才對
+  const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+  //這樣寫才對
+  console.log(obj);
+  
+  conn.query(sqlKey, [], function (err, rows) {
+    if (err) {
+      console.log(JSON.stringify(err));
+      console.log('錯誤!');
+      return;
+    }
+    if(rows.length > 0){
+      console.log(rows.email);
+      let returnData = {result : true, member : rows.email}
+      res.send(JSON.stringify(returnData));
+      console.log('有資料');
+    }else{
+      res.send(JSON.stringify({result : false}));
+    }
+    console.log('log:',req.body.newsId);
+  });
+  console.log(newsId);
 });
 
 // 更新會員資料
