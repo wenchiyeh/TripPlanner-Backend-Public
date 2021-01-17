@@ -13,6 +13,7 @@ var conn = mysql.createConnection({
 
 //會員資料
 router.get("/", function (req, res, next) {
+  let { id: newsId = "*"} = req.body
   //驗證用戶是否存在
   let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}' and valid =1`;
   //這樣寫才對
@@ -61,7 +62,7 @@ router.get("/:id", function (req, res, next) {
     }else{
       res.send(JSON.stringify({result : false}));
     }
-    console.log('log:',req.body.newsId);
+    console.log('log:',newsId);
   });
   console.log(newsId);
 });
