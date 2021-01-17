@@ -61,48 +61,26 @@ conn.query(sql,[], function (err, rows) {
     
 });
 
+router.post("/gohistory", function (req, res, next) {
+  console.log(req.body);
+  let sqlKey = `insert into orderhistory(user_name,gender,phone,mail,birthday,\ticket_type,price,) value=(${req.body.email})`;
+  conn.query(sqlKey, [], function (err, rows) {
+    if (err) {
+      console.log(JSON.stringify(err));
+      return;
+    }
+    if (rows.length >= 1) {
+      console.log(rows[0].newsId);
+      let returnData = { result: true, member: rows[0].newsId };
+      res.send(JSON.stringify(returnData));
+    } else {
+      res.send(JSON.stringify({ result: false }));
+    }
+  });
+});
 
-// router.post(`/create`, function (req, res, next) {
-//     let sql1 = `INSERT INTO travelbuddies themeName = ?,
-//     owner_id = ?,
-//     themePhoto = ?,
-//     dateBegin = ?,
-//     dateEnd = ?, 
-//     daysCategory_id = ?, 
-//     lastApprovedDate = ?, 
-//     personNeeded = ?, 
-//     genderNeeded = ?, 
-//     estimatedCost = ?, 
-//     themeIntro = ?, 
-//     valid = ? `
-//     let sql2 = `INSERT INTO categoryRelations travelbuddies_id = ?,
-//     regionCategory_id  =  ?,
-//     cityCategory_id = ?`
-//     conn.beginTransaction
-//     res.send(`已連線`)
-    
-// })
 
-// router.put(`/update`, function (req, res, next) {
-//     let sql1 = ` travelbuddies themeName  =  ?,
-//     owner_id = ?, 
-//     themePhoto = ?, 
-//     dateBegin = ?, 
-//     dateEnd = ?, 
-//     daysCategory_id = ?, 
-//     lastApprovedDate = ?, 
-//     personNeeded = ?, 
-//     genderNeeded = ?, 
-//     estimatedCost = ?, 
-//     themeIntro = ?, 
-//     valid = ? `
-//     let sql2 = `INSERT INTO categoryRelations travelbuddies_id = ?,
-//     regionCategory_id = ?,
-//     cityCategory_id = ?`
-//     conn.beginTransaction
-//     res.send(`已連線`)
-    
-// })
+
 
 
 
