@@ -57,7 +57,7 @@ router.get("/:id", function (req, res, next) {
 
 // 更新會員資料
 router.put("/", function (req, res, next) {
-  console.log("ud:",req.body.newsId)
+  console.log("ud1:",req.body.newsId)
   let sqlKey = `update member set 
     email='${req.body.email}', 
     password='${req.body.password}', 
@@ -77,7 +77,7 @@ conn.query(sqlKey,[], function (err, rows) {
 });
 
 router.put("/:id", function (req, res, next) {
-  console.log('ud:',req.params.newsId)
+  console.log('ud2:',req.params.newsId)
 
   // let sqlKey = `update member set 
   // email='${req.body.email}', password='${req.body.password}' where id='${id}'`;
