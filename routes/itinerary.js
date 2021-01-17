@@ -66,6 +66,7 @@ router.get("/", function (req, res, next) {
   itinerary.info,
   itinerary.location,
   itinerary.duration,
+  itinerary.publish_time,
   itinerary.heart,
   itinerary.keep,
   itinerary.image,
@@ -75,7 +76,7 @@ router.get("/", function (req, res, next) {
   member.member_id as nickname
   from itinerary
   join member on itinerary.member_id = member.newsId
-  where `;
+  where itinerary.publish_time != 'null' and `;
 
   area === "" && town === "" && day === 0 && keyword === ""
     ? (sqlGetFilterList += `itinerary.valid = 1`)
@@ -162,8 +163,36 @@ router.get("/:itinId", function (req, res, next) {
       res.send(JSON.stringify(returnData));
     });
   });
+});
 
-  // res.send(`edit: ${itinId}`);
+router.post("/addItin", function (req, res, next) {
+  let data = req.body;
+  data.forEach((element) => {
+    let sqlCheck = `select itinList.id from itinList where itinList.place_id = '${element.id}'`;
+    conn.query(sqlCheck, [], function (err, rows) {
+      if (err) {
+        console.log(JSON.stringify(err));
+        return err;
+      } else {
+        if (rows.length > 0) {
+          console.log(`${element.title} 重複`);
+        } else {
+          let town = element.town.slice(10, 12);
+          let add = town + element.vicinity;
+          let title = element.title.replace("'", "");
+          title = title.replace('"', "");
+          let inserItinToDB = `insert into itinList (place_id,title,lat,lng,address,city) values('${element.id}','${title}','${element.lat}','${element.lng}','${add}','${town}')`;
+          conn.query(inserItinToDB, [], function (err, rows) {
+            if (err) {
+              console.log(JSON.stringify(err));
+              return;
+            }
+          });
+        }
+      }
+    });
+  });
+  res.send(JSON.stringify({ result: "ok" }));
 });
 
 module.exports = router;
