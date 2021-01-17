@@ -15,61 +15,49 @@ var conn = mysql.createConnection({
 router.get("/", function (req, res, next) {
   let { id: newsId = "*"} = req.body
   //驗證用戶是否存在
-  let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}' and valid =1`;
+  let sqlKey = `SELECT member.*,
+  email,
+  password,
+  newsId='${newsId}'
+  from member where valid=1`;
+  //let sqlKey = `select * from member email='${req.body.email}' and password='${req.body.password}' and newsId='${newsId}'`;
   //這樣寫才對
   const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
-  console.log('obj/',obj);
-  console.log('我是id',id);
-  conn.query(sqlKey, [], function (err, rows) {
-    if (err) {
-      console.log(JSON.stringify(err));
-      console.log('錯誤!');
-      return;
+  console.log('/member',obj);
+  
+  conn.query(sqlKey,[], function (err, rows) {
+    if(err){
+        console.log(err);
     }
-    if(rows.length > 0){
-      console.log('/',rows[0].newsId);
-      let returnData = {result : true, member : rows[0].newsId}
-      res.send(JSON.stringify(returnData));
-      console.log('有資料', returnData);
-    }else{
-      res.send(JSON.stringify({result : false}));
-    }
-  });
+        res.send(JSON.stringify(rows));
+        });
+    
 });
 
 router.get("/:id", function (req, res, next) {
 
   let { id: newsId = "*"} = req.params
+  let sqlKey = `select * from member where newsId='${newsId}' or valid=1`
   //驗證用戶是否存在
-  let sqlKey = `select * from member where newsId=${newsId} and valid=1`;
+  //let sqlKey = `select * from member where `;
+  //let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}' and newsId='${newsId}'`;
   //這樣寫才對
-  const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+  const obj = JSON.parse(JSON.stringify(req.params)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
-  console.log('/:id',req.params, obj);
-  
-  conn.query(sqlKey, [], function (err, rows) {
-    if (err) {
-      console.log(JSON.stringify(err));
-      console.log('錯誤!');
-      return;
+  console.log('/member:id',obj);
+  conn.query(sqlKey,[], function (err, rows) {
+    if(err){
+        console.log(err);
     }
-    if(rows.length > 0){
-      console.log('result', rows);
-      let returnData = {result : true, member : rows}
-      res.send(JSON.stringify(returnData));
-      console.log('有資料', returnData);
-    }else{
-      res.send(JSON.stringify({result : false}));
-    }
-    console.log('log:',newsId);
-  });
-  //console.log(newsId);
+        res.send(JSON.stringify(rows));
+        });
+    
 });
 
 // 更新會員資料
-router.put("/update", function (req, res, next) {
-  console.log(req.body.newsId)
+router.put("/", function (req, res, next) {
+  console.log("ud:",req.body.newsId)
   let sqlKey = `update member set 
     email='${req.body.email}', 
     password='${req.body.password}', 
@@ -88,27 +76,27 @@ conn.query(sqlKey,[], function (err, rows) {
   
 });
 
-// router.put("/:id", function (req, res, next) {
-//   console.log(req.body.newsId)
+router.put("/:id", function (req, res, next) {
+  console.log('ud:',req.params.newsId)
 
-//   // let sqlKey = `update member set 
-//   // email='${req.body.email}', password='${req.body.password}' where id='${id}'`;
-//   let sqlKey = `update member set 
-//     email='${req.body.email}', 
-//     password='${req.body.password}', 
-//     member_name='${req.body.member_name}',  
-//     member_phone='${req.body.member_phone}',  
-//     birthday='${req.body.birthday}', 
-//     member_sex='${req.body.member_sex}',
-//     member_id='${req.body.member_id}',
-//     member_aboutme='${req.body.member_aboutme}' where newsid='${req.body.newsId}'`;
-// conn.query(sqlKey,[], function (err, rows) {
-//   if(err){
-//       console.log(err);
-//   }
-//       res.send(JSON.stringify(rows));
-//       });
+  // let sqlKey = `update member set 
+  // email='${req.body.email}', password='${req.body.password}' where id='${id}'`;
+  let sqlKey = `update member set 
+    email='${req.params.email}', 
+    password='${req.params.password}', 
+    member_name='${req.params.member_name}',  
+    member_phone='${req.params.member_phone}',  
+    birthday='${req.params.birthday}', 
+    member_sex='${req.params.member_sex}',
+    member_id='${req.params.member_id}',
+    member_aboutme='${req.params.member_aboutme}' where newsid='${req.params.newsId}'`;
+conn.query(sqlKey,[], function (err, rows) {
+  if(err){
+      console.log(err);
+  }
+      res.send(JSON.stringify(rows));
+      });
   
-// });
+});
 
 module.exports = router;
