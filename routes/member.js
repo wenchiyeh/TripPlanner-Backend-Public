@@ -19,8 +19,8 @@ router.get("/", function (req, res, next) {
   //這樣寫才對
   const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
-  console.log('/',obj);
-  
+  console.log('obj/',obj);
+  console.log('我是id',id);
   conn.query(sqlKey, [], function (err, rows) {
     if (err) {
       console.log(JSON.stringify(err));
@@ -28,7 +28,7 @@ router.get("/", function (req, res, next) {
       return;
     }
     if(rows.length > 0){
-      console.log(rows[0].newsId);
+      console.log('/',rows[0].newsId);
       let returnData = {result : true, member : rows[0].newsId}
       res.send(JSON.stringify(returnData));
       console.log('有資料', returnData);
@@ -64,7 +64,7 @@ router.get("/:id", function (req, res, next) {
     }
     console.log('log:',newsId);
   });
-  console.log(newsId);
+  //console.log(newsId);
 });
 
 // 更新會員資料

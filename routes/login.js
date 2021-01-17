@@ -17,7 +17,7 @@ router.post("/", function (req, res, next) {
   //這樣寫才對
   const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
-  console.log(obj);
+  console.log('/',obj);
   
   conn.query(sqlKey, [], function (err, rows) {
     if (err) {
@@ -28,38 +28,38 @@ router.post("/", function (req, res, next) {
     }
     if(rows.length > 0){
       const id = (rows[0].newsId)
-      console.log(id);
+      console.log('id',id);
       let returnData = {result : true, member : id}
       res.send(JSON.stringify(returnData));
-      console.log(id);
     }else{
       res.send(JSON.stringify({result : false}));
     }
   });
 });
 
-// router.post("/:id", function (req, res, next) {
-//   //驗證用戶是否存在
-//   let sqlKey = `select * from member `;
-//   //這樣寫才對
-//   const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
-//   //這樣寫才對
-//   console.log(obj);
-//   conn.query(sqlKey, [], function (err, rows) {
-//     if (err) {
-//       console.log(JSON.stringify(err));
-//       result.status = "登入失敗。"
-//       result.err = "伺服器錯誤，請稍後在試！"
-//       return;
-//     }
-//     if(rows.length > 0){
-//       console.log(rows[0].newsId);
-//       let returnData = {result : true, member : rows[0].newsId}
-//       res.send(JSON.stringify(returnData));
-//     }else{
-//       res.send(JSON.stringify({result : false}));
-//     }
-//   });
-// });
+router.post("/:id", function (req, res, next) {
+  //驗證用戶是否存在
+  let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}'`;
+  //這樣寫才對
+  const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+  //這樣寫才對
+  console.log('/:id',obj);
+  conn.query(sqlKey, [], function (err, rows) {
+    if (err) {
+      console.log(JSON.stringify(err));
+      result.status = "登入失敗。"
+      result.err = "伺服器錯誤，請稍後在試！"
+      return;
+    }
+    if(rows.length > 0){
+      console.log('rows',rows[0].newsId);
+      let returnData = {result : true, member : rows[0].newsId}
+      res.send(JSON.stringify(returnData));
+    }
+    else{
+      res.send(JSON.stringify({result : false}));
+    }
+  });
+});
 
 module.exports = router;
