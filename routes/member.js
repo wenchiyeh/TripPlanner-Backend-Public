@@ -38,7 +38,7 @@ router.get("/", function (req, res, next) {
 router.get("/:id", function (req, res, next) {
 
   let { id: newsId } = req.params
-  let sqlKey = `select * from member where newsId='${newsId}' or valid=1`
+  let sqlKey = `select * from member where newsId='${newsId}' or email='${req.params.email}'`
   //驗證用戶是否存在
   //let sqlKey = `select * from member where `;
   //let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}' and newsId='${newsId}'`;

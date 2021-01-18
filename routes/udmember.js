@@ -49,7 +49,6 @@ router.post("/:id", function (req, res, next) {
     member_sex=?,
     member_id=?,
     member_aboutme=? where newsId=${newsId}'`;
-  // let sqlKey = `update member set 
   //   email='${req.body.email}', 
   //   password='${req.body.password}', 
   //   member_name='${req.body.member_name}',  
