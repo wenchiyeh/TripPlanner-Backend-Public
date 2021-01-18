@@ -20,6 +20,7 @@ var testRouter = require("./routes/test");
 var signRouter = require("./routes/sign");
 var loginRouter = require("./routes/login");
 var memberRouter = require("./routes/member");
+var udmemberRouter = require("./routes/udmember");
 //收藏
 var meFavoritesgroupRouter = require("./routes/meFavoritesgroup")
 var app = express();
@@ -53,6 +54,7 @@ app.use("/test", testRouter);
 app.use("/sign", signRouter);
 app.use("/login", loginRouter);
 app.use("/member", memberRouter);
+app.use("/udmember", udmemberRouter);
 //收藏
 app.use("/meFavoritesgroup", meFavoritesgroupRouter)
 //

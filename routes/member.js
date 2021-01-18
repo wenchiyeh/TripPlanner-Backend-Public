@@ -11,42 +11,48 @@ var conn = mysql.createConnection({
   database: process.env["database"],
 });
 
-/* GET itinerary listing. */
+//會員資料
 router.get("/", function (req, res, next) {
-  let { id = "*"} = req.body;
-  console.log(req.body)
-  //let sqlKey = `select * from member where newsid=1`;
-  //let sqlKey = `select member.* from member`
-  let sqlKey = `select * from member where email ='${req.body.email}' or id='${id}'`
-   conn.query(sqlKey, [], function (err, rows) {
-    if (err) {
-      console.log(JSON.stringify(err));
-      return;
-    }
-    res.send(JSON.stringify(rows));
-  });
-});
-// 更新會員資料
-//let sqlKey=" member member_name = ?, valid = ? "
-router.get("/:id", function (req, res, next) {
-  console.log(req.params.id)
-  //let sqlKey = `select * from member where email ='${req.body.email}'`
-  let sqlKey = `select * from member where id=${req.params.id}`
-conn.query(sqlKey,[], function (err, rows) {
-  if(err){
-      console.log(err);
-  }
-      res.send(JSON.stringify(rows));
-      });
+  let { id: newsId } = req.body
+  //驗證用戶是否存在
+  let sqlKey = `SELECT member.*,
+  email,
+  password,
+  newsId='${newsId}'
+  from member where valid=1`;
+  //let sqlKey = `select * from member email='${req.body.email}' and password='${req.body.password}' and newsId='${newsId}'`;
+  //這樣寫才對
+  const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+  //這樣寫才對
+  console.log('/member',obj);
   
+  conn.query(sqlKey,[], function (err, rows) {
+    if(err){
+        console.log(err);
+    }
+        res.send(JSON.stringify(rows));
+        });
+    
 });
-//找會員
-// router.get("/:id", function (req, res, next) {
-//   let id = req.body.email;
-//   console.log(req.body)
-//   let sqlKey = `select * from member where email ='${req.body.email}'`
-//   conn.beginTransaction
-//   res.send("已連線")
-// })
+
+router.get("/:id", function (req, res, next) {
+
+  let { id: newsId } = req.params
+  let sqlKey = `select * from member where newsId='${newsId}' or email='${req.params.email}'`
+  //驗證用戶是否存在
+  //let sqlKey = `select * from member where `;
+  //let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}' and newsId='${newsId}'`;
+  //這樣寫才對
+  const obj = JSON.parse(JSON.stringify(req.params)); // req.body = [Object: null prototype] { title: 'product' }
+  //這樣寫才對
+  console.log('/member:id',obj);
+  conn.query(sqlKey,[], function (err, rows) {
+    if(err){
+        console.log(err);
+    }
+        res.send(JSON.stringify(rows));
+        });
+    
+});
 
 module.exports = router;

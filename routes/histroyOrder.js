@@ -18,7 +18,7 @@ conn.connect(function(err){
 
 
 router.get(`/`, function (req, res, next) {
-    let sql  = `SELECT orderhistory.*,member.member_name as user_Name,member.birthday as user_birthday,member.email as user_mail,member.member_sex as gender,member.member_phone as user_phone,products.className as class_Name from orderhistory join member on orderhistory.userId = member.newsId join products on orderhistory.productID = products.id ORDER BY orderhistory.id DESC`
+    let sql = `SELECT orderhistory.* from orderhistory ORDER BY orderhistory.id DESC`;
 conn.query(sql,[], function (err, rows) {
     if(err){
         console.log(err);
@@ -27,16 +27,15 @@ conn.query(sql,[], function (err, rows) {
         });
     
 });
-router.get(`/:id`, function (req, res, next) {
-    let orderId = req.params.id;
-    let sql  = `SELECT orderhistory.*,member.member_name as user_Name,member.birthday as user_birthday,member.email as user_mail,member.member_sex as gender,member.member_phone as user_phone,products.className as class_Name from orderhistory join member on orderhistory.userId = member.newsId join products on orderhistory.productID = products.id where orderhistory.id = '${orderId}' ORDER BY orderhistory.id DESC`
-conn.query(sql,[], function (err, rows) {
-    if(err){
-        console.log(err);
+router.get(`/:orderId`, function (req, res, next) {
+  let orderId = req.params.orderId;
+  let sql = `SELECT * from orderhistory where orderhistory.id = '${orderId}'`;
+  conn.query(sql, [], function (err, rows) {
+    if (err) {
+      console.log(err);
     }
-        res.send(JSON.stringify(rows));
-        });
-    
+    res.send(JSON.stringify(rows));
+  });
 });
 
 
