@@ -87,9 +87,7 @@ let sqlKey = `update member set
     
 });
 
-
-
-router.put("/:id", function (req, res, next) {
+router.post("/:id", function (req, res, next) {
   console.log("udid:",req.params.newsId)
   let sqlKey = `update member set 
     email=?, 
