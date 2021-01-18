@@ -69,16 +69,6 @@ router.get(`/car1/:id`, function (req, res, next) {
   });
 });
 
-router.get('/car3/:id',function(req,res,next){
-  
-  let showsql = `select orderhistory.* from orderhistory where orderhistory.ticketNumber = '${ticket_number}'`;
-  conn.query(showsql, [], function (err, rows) {
-    if (err) {
-      console.log(JSON.stringify(err));
-      res.send(JSON.stringify(rows));
-    }
-  });
-})
 
 
 
