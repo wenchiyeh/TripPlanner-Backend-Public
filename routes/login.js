@@ -30,7 +30,7 @@ router.post("/", function (req, res, next) {
       const id = (rows[0].newsId)
       console.log('id',id);
       let returnData = {result : true, member : id}
-      res.send(JSON.stringify(returnData));
+      res.send(JSON.stringify(rows[0]));
     }else{
       res.send(JSON.stringify({result : false}));
     }
