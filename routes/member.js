@@ -42,8 +42,9 @@ router.get("/", function (req, res, next) {
 
 router.get("/:id", function (req, res, next) {
 
-  let { id: newsId } = req.params
-  let sqlKey = `select * from member where newsId='${newsId}' or email='${req.params.email}'`
+  let { id } = req.params
+  // let sqlKey = `select * from member where newsId='${newsId}' or email='${req.params.email}'`
+  let sqlKey = `select * from member where newsId='${id}'`
   //驗證用戶是否存在
   //let sqlKey = `select * from member where `;
   //let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}' and newsId='${newsId}'`;
@@ -55,6 +56,7 @@ router.get("/:id", function (req, res, next) {
     if(err){
         console.log(err);
     }
+    console.log(`member ${id} = ${rows}`);
         res.send(JSON.stringify(rows));
         });
     
@@ -87,7 +89,7 @@ let sqlKey = `update member set
     
 });
 
-router.post("/:id", function (req, res, next) {
+router.put("/:id", function (req, res, next) {
   console.log("udid:",req.params.newsId)
   let sqlKey = `update member set 
     email=?, 

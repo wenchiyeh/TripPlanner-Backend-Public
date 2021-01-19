@@ -1,3 +1,4 @@
+//目前沒有用
 var express = require("express");
 var router = express.Router();
 //使用環境參數
