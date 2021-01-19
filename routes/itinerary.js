@@ -11,7 +11,7 @@ var conn = mysql.createConnection({
   database: process.env["database"],
 });
 
-/* GET itinerary listing. */
+//取得行程列表 & 搜尋功能
 router.get("/", function (req, res, next) {
   let { area = "", town = "", day = 0, keyword = "" } = req.query;
   area = area.replace("全部", "");
@@ -100,7 +100,7 @@ router.get("/", function (req, res, next) {
     res.send(JSON.stringify(rows));
   });
 });
-
+//取得特定行程資料
 router.get("/:itinId", function (req, res, next) {
   let itinId = req.params.itinId;
   let returnData = [{}, {}];
@@ -108,6 +108,8 @@ router.get("/:itinId", function (req, res, next) {
   member.member_name,
   itinerary.member_id,
   itinerary.title,
+  itinerary.region,
+  itinerary.location,
   itinerary.duration,
   itinerary.publish_time,
   itinerary.heart,
@@ -192,6 +194,12 @@ router.post("/addItin", function (req, res, next) {
       }
     });
   });
+  res.send(JSON.stringify({ result: "ok" }));
+});
+
+router.post("/createItin", function (req, res) {
+  let data = req.body;
+  console.log(data);
   res.send(JSON.stringify({ result: "ok" }));
 });
 
