@@ -13,12 +13,14 @@ var tbRouter = require("./routes/travelBuddies");
 
 var roRouter = require("./routes/histroyOrder");
 var buRouter = require("./routes/ProductsList")
+
 var tbmyaccountRouter = require("./routes/tbMyAccount");
 var testRouter = require("./routes/test");
 //memberliao
 var signRouter = require("./routes/sign");
 var loginRouter = require("./routes/login");
 var memberRouter = require("./routes/member");
+var udmemberRouter = require("./routes/udmember");
 //收藏
 var meFavoritesgroupRouter = require("./routes/meFavoritesgroup")
 var app = express();
@@ -52,6 +54,7 @@ app.use("/test", testRouter);
 app.use("/sign", signRouter);
 app.use("/login", loginRouter);
 app.use("/member", memberRouter);
+app.use("/udmember", udmemberRouter);
 //收藏
 app.use("/meFavoritesgroup", meFavoritesgroupRouter)
 //
