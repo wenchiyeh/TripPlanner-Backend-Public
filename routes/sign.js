@@ -14,8 +14,7 @@ var conn = mysql.createConnection({
 router.post("/", function (req, res, next) {
     console.log(req.body)
     //新增會員
-    //let sqlKey = `insert into member set email='${req.body.email}', password='${req.body.password}'`;
-    let sqlKey = `select email from member where email ='${req.body.email}'`
+    let sqlKey = `insert into member set email='${req.body.email}', password='${req.body.password}'`;
     conn.query(sqlKey, [], function (err, rows) {
       if (err) {
         console.log(JSON.stringify(err));

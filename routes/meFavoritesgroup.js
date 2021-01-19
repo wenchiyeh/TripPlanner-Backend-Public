@@ -25,12 +25,11 @@ router.get(`/`, function (req, res, next) {
     travelbuddies.genderNeeded_id as tr_needid,
     citycategory.city as tr_city,
     regioncategory.region as tr_region
-    from ticket
+    from mefavoritesgroup
     natural join regioncategory
     natural join citycategory
     natural join travelbuddies
-    natural join member
-    `
+    `;
 
     conn.query(sql,[], function (err, rows) {
     if(err){
