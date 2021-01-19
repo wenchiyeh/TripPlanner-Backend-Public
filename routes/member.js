@@ -90,18 +90,17 @@ let sqlKey = `update member set
 });
 
 router.put("/:id", function (req, res, next) {
-  console.log("udid:",req.body)
+  console.log("udid:",req.body.id)
   let sqlKey = `update member set 
-    email=?, 
-    password=?, 
-    member_name=?,  
-    member_phone=?,
-    member_sex=?,
-    member_id=?,
-    member_aboutme=?
+    email='${req.body.email}',
+    member_name='${req.body.member_name}',  
+    member_phone='${req.body.member_phone}',
+    member_sex='${req.body.member_sex}',
+    member_id='${req.body.member_id}',
+    member_aboutme='${req.body.member_aboutme}'
     where newsId='${req.params.id}'`;
+  // let sqlKey = `update member set
   //   email='${req.body.email}', 
-  //   password='${req.body.password}', 
   //   member_name='${req.body.member_name}',  
   //   member_phone='${req.body.member_phone}',  
   //   birthday='${req.body.birthday}', 
@@ -112,7 +111,7 @@ router.put("/:id", function (req, res, next) {
   //這樣寫才對
   console.log('/ud2',obj);
   
-  conn.query(sqlKey,[req.body.email,req.body.password,req.body.member_name,req.body.member_sex,req.body.member_id,req.body.member_aboutme], function (err, rows) {
+  conn.query(sqlKey,[req.body.email,,req.body.member_name,req.body.birthday,req.body.member_sex,req.body.member_id,req.body.member_aboutme], function (err, rows) {
     if(err){
         console.log(err);
     }

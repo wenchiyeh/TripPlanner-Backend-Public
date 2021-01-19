@@ -39,9 +39,9 @@ router.post("/", function (req, res, next) {
 
 router.post("/:id", function (req, res, next) {
   //驗證用戶是否存在
-  let sqlKey = `select * from member where email='${req.body.email}' and password='${req.body.password}'`;
+  let sqlKey = `select * from member where email='${req.params.email}' and password='${req.params.password}'`;
   //這樣寫才對
-  const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+  const obj = JSON.parse(JSON.stringify(req.params)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
   console.log('/:id',obj);
   conn.query(sqlKey, [], function (err, rows) {
