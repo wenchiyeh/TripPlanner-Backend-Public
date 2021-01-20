@@ -50,7 +50,8 @@ function cityToRegion(city) {
   }
   return region;
 }
-
+//
+//
 //取得行程列表 & 搜尋功能
 router.get("/", function (req, res, next) {
   let { area = "", town = "", day = 0, keyword = "" } = req.query;
@@ -140,6 +141,8 @@ router.get("/", function (req, res, next) {
     res.send(JSON.stringify(rows));
   });
 });
+//
+//
 //取得特定行程資料
 router.get("/:itinId", function (req, res, next) {
   let itinId = req.params.itinId;
@@ -161,6 +164,8 @@ router.get("/:itinId", function (req, res, next) {
   where itinerary.id = ${itinId}
   `;
   let sqlGetBox = `select
+  spotsbox.itinerary_id,
+  spotsbox.place_id,
   spotsbox.day,
   spotsbox.box_order,
   spotsbox.type,
@@ -175,7 +180,7 @@ router.get("/:itinId", function (req, res, next) {
   from spotsbox
   join citycategory on citycategory.city = spotsbox.location
   join regioncategory on regioncategory.id = citycategory.regionCategory_id
-  where itinerary_id = ${itinId}
+  where itinerary_id = ${itinId}  and spotsbox.valid = 1
   `;
 
   conn.query(sqlGetItin, [], function (err, rows) {
@@ -236,7 +241,9 @@ router.post("/addItin", function (req, res, next) {
   });
   res.send(JSON.stringify({ result: "ok" }));
 });
-
+//
+//
+//新增
 router.post("/createItin", function (req, res) {
   let data = req.body;
   console.log(data);
@@ -294,7 +301,6 @@ router.post("/createItin", function (req, res) {
         } else {
           sqlInsertItinBody += `, ('${currentID}','${item.place_id}','${item.day}','${item.order}','${item.title}','${handleFormate}','${item.location}','${item.lat}','${item.lng}') `;
         }
-        sqlInsertItinBody += ``;
       });
     });
     conn.query(sqlInsertItinBody, [], function (err, rows) {
@@ -305,6 +311,131 @@ router.post("/createItin", function (req, res) {
       res.send(JSON.stringify({ result: "ok", itin_id: currentID }));
     });
   });
+});
+//
+//
+//修改
+router.put("/edit", function (req, res) {
+  let data = req.body;
+  console.log(data);
+  let headData = data[0]; //行程主資料
+  let bodyData = data[1]; //行程day-box資料
+  //
+  let sqlInsertItinHead = `update itinerary set title = ?, region = ?, location = ?, duration = ? where itinerary.id = '${headData.id}'`;
+  console.log(`sqlInsertItinHead = ${sqlInsertItinHead}`);
+  conn.query(
+    sqlInsertItinHead,
+    [
+      headData.title,
+      cityToRegion(headData.location),
+      headData.location,
+      headData.duration,
+    ],
+    function (err, rows) {
+      if (err) {
+        console.log(JSON.stringify(err));
+        return;
+      }
+    }
+  );
+  let checkBoxID = `select spotsbox.id from spotsbox where itinerary_id = '${headData.id}'`;
+  let boxIndex = [];
+  conn.query(checkBoxID, [], function (err, rows) {
+    if (err) {
+      console.log(JSON.stringify(err));
+      return;
+    }
+    boxIndex = rows;
+    let allBoxArray = [];
+    bodyData.forEach((ele) => {
+      ele.data.forEach((item) => {
+        item.begin = item.begin.replace(":", "");
+        allBoxArray.push(item);
+      });
+    });
+    console.log(`boxIndex.length = ${boxIndex}`);
+    for (let i = 0; i < boxIndex.length; ++i) {
+      if (allBoxArray.length > 0) {
+        let tempData = allBoxArray.shift();
+        let sqlUpdateBox = `update spotsbox set day = ?, box_order = ?, title = ?, begin = ?, location = ?, lat = ?, lng = ?, valid = ? where spotsbox.id = '${boxIndex[i].id}'`;
+        conn.query(
+          sqlUpdateBox,
+          [
+            tempData.day,
+            tempData.order,
+            tempData.title,
+            tempData.begin,
+            tempData.location,
+            tempData.lat,
+            tempData.lng,
+            1,
+          ],
+          function (err, rows) {
+            if (err) {
+              console.log(JSON.stringify(err));
+              return;
+            }
+          }
+        );
+      } else {
+        let sqlUpdateBox = `update spotsbox set valid = 0 where spotsbox.id = '${boxIndex[i].id}'`;
+        conn.query(sqlUpdateBox, [], function (err, rows) {
+          if (err) {
+            console.log(JSON.stringify(err));
+            return;
+          }
+        });
+      }
+    }
+    console.log(`after forloop : ${allBoxArray.length}`);
+    if (allBoxArray.length > 0) {
+      let sqlInsertItinBody = `insert into spotsbox (itinerary_id, place_id, day, box_order, title, begin, location, lat, lng) values`;
+      allBoxArray.forEach((item, index) => {
+        if (index === 0) {
+          sqlInsertItinBody += `('${headData.id}','${item.place_id}','${item.day}','${item.order}','${item.title}','${item.begin}','${item.location}','${item.lat}','${item.lng}')`;
+        } else {
+          sqlInsertItinBody += `, ('${headData.id}','${item.place_id}','${item.day}','${item.order}','${item.title}','${item.begin}','${item.location}','${item.lat}','${item.lng}') `;
+        }
+        conn.query(sqlInsertItinBody, [], function (err, rows) {
+          if (err) {
+            console.log(JSON.stringify(err));
+            return;
+          }
+        });
+      });
+    }
+  });
+
+  res.send(JSON.stringify({ result: "ok", itin_id: headData.id }));
+  //
+  //
+  //
+  // let currentID = "";
+  // conn.query(checkItinID, [], function (err, rows) {
+  //   if (err) {
+  //     console.log(JSON.stringify(err));
+  //     return;
+  //   }
+  //   currentID = rows[0].id;
+  //   let sqlInsertItinBody = `insert into spotsbox (itinerary_id, place_id, day, box_order, title, begin, location, lat, lng) values`;
+  //   bodyData.forEach((ele, indexDay) => {
+  //     ele.data.forEach((item, indexBox) => {
+  //       let handleFormate = item.begin.replace(":", "");
+  //       if (indexDay === 0 && indexBox === 0) {
+  //         sqlInsertItinBody += `('${currentID}','${item.place_id}','${item.day}','${item.order}','${item.title}','${handleFormate}','${item.location}','${item.lat}','${item.lng}')`;
+  //       } else {
+  //         sqlInsertItinBody += `, ('${currentID}','${item.place_id}','${item.day}','${item.order}','${item.title}','${handleFormate}','${item.location}','${item.lat}','${item.lng}') `;
+  //       }
+  //     });
+  //   });
+  //   conn.query(sqlInsertItinBody, [], function (err, rows) {
+  //     if (err) {
+  //       console.log(JSON.stringify(err));
+  //       return;
+  //     }
+  //     res.send(JSON.stringify({ result: "ok", itin_id: currentID }));
+  //   });
+  // });
 });
 
 module.exports = router;
