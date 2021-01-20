@@ -16,8 +16,19 @@ conn.connect(function(err){
     }
 })
 
-router.get(`/`, function (req, res, next) {
-    let sql = `select travelbuddies.*,
+router.get('/', function (req, res, next) {
+    let sql = `selcet mefavoritesgroup.*,
+    travelbuddies.themeName as mef_title,
+    travelbuddies.dateBegin as mef_dtime,
+    travelbuddies.dateEnd as mef_dend,
+    citycategory.id as mef_city,
+    regioncategory.id as mef_erg
+    from mefavoritesgroup 
+    join travelbuddies on travelbuddies.id = mefavoritesgroup.group_title
+    join citycategory on citycategory.id = mefavoritesgroup.group_area1
+    join regioncategoryon regioncategory.id = mefavoritesgroup.group_area2
+    `;
+    let sql2 = `select travelbuddies.*,
     member.member_name as tr_membername,
     travelbuddies.themeName as tr_name,
     travelbuddies.dateBegin as tr_datebegin,
@@ -31,7 +42,7 @@ router.get(`/`, function (req, res, next) {
     natural join travelbuddies
     `;
 
-    conn.query(sql,[], function (err, rows) {
+    conn.query(sql,sql2, function (err, rows) {
     if(err){
         console.log(err);
     }
@@ -39,5 +50,29 @@ router.get(`/`, function (req, res, next) {
         });
     
 });
+
+// router.get('/:id', function (req, res, next) {
+//     let mefavoritesgroup = req.params.id;
+//     let sql = `selcet mefavoritesgroup.*,
+//     travelbuddies.themeName as mef_title,
+//     travelbuddies.dateBegin as mef_dtime,
+//     travelbuddies.dateEnd as mef_dend,
+//     citycategory.id as mef_city,
+//     regioncategory.id as mef_erg
+//     from mefavoritesgroup 
+//     join travelbuddies on travelbuddies.id = mefavoritesgroup.group_title
+//     join citycategory on citycategory.id = mefavoritesgroup.group_area1
+//     join regioncategoryon regioncategory.id = mefavoritesgroup.group_area2
+//     where where mefavoritesgroup.id = ${mefavoritesgroup}
+//     `;
+
+//     conn.query(sql,[], function (err, rows) {
+//         if(err){
+//             console.log(err);
+//         }
+//             res.send(JSON.stringify(rows));
+//             });
+        
+//     });
 
 module.exports  =  router;
