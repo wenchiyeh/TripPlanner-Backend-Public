@@ -4,7 +4,10 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
-//
+
+// 金流
+const ecpay_payment = require("ecpay_payment_nodejs");
+
 //自定義路由檔案
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -12,7 +15,8 @@ var itinRouter = require("./routes/itinerary");
 var tbRouter = require("./routes/travelBuddies");
 
 var roRouter = require("./routes/histroyOrder");
-var buRouter = require("./routes/ProductsList")
+var buRouter = require("./routes/ProductsList");
+var coRouter = require("./routes/controller");
 
 var tbmyaccountRouter = require("./routes/tbMyAccount");
 var testRouter = require("./routes/test");
@@ -22,7 +26,7 @@ var loginRouter = require("./routes/login");
 var memberRouter = require("./routes/member");
 var udmemberRouter = require("./routes/udmember");
 //收藏
-var meFavoritesgroupRouter = require("./routes/meFavoritesgroup")
+var meFavoritesgroupRouter = require("./routes/meFavoritesgroup");
 var app = express();
 //
 //使用環境參數
@@ -45,8 +49,9 @@ app.use("/users", usersRouter);
 app.use("/itinerary", itinRouter);
 app.use("/travelbuddies", tbRouter);
 
-app.use("/productList", buRouter)
+app.use("/productList", buRouter);
 app.use("/historyOrder", roRouter);
+app.use("/controller", coRouter);
 
 app.use("/tbmyaccount", tbmyaccountRouter);
 app.use("/test", testRouter);
@@ -56,7 +61,7 @@ app.use("/login", loginRouter);
 app.use("/member", memberRouter);
 app.use("/udmember", udmemberRouter);
 //收藏
-app.use("/meFavoritesgroup", meFavoritesgroupRouter)
+app.use("/meFavoritesgroup", meFavoritesgroupRouter);
 //
 //
 //資料庫連線
@@ -113,7 +118,8 @@ app.get("/member/:id", function (req, res) {
   );
 });
 //
-//
+//後方都不要管
+
 //後方都不要管
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
