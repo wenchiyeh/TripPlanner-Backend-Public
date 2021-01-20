@@ -11,7 +11,7 @@ require("dotenv").config();
 
 
 
-router.post("/", function (req, res, next) {
+router.post("/eco", function (req, res, next) {
   let data = req.body;
   let user_name = data.user_name;
   let ticket_number = data.ticket_number;

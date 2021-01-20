@@ -51,7 +51,7 @@ app.use("/travelbuddies", tbRouter);
 
 app.use("/productList", buRouter);
 app.use("/historyOrder", roRouter);
-app.use("/controller", coRouter);
+app.use("/eco", coRouter);
 
 app.use("/tbmyaccount", tbmyaccountRouter);
 app.use("/test", testRouter);
