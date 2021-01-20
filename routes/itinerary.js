@@ -158,7 +158,8 @@ router.get("/:itinId", function (req, res, next) {
   itinerary.heart,
   itinerary.keep, 
   itinerary.view,
-  itinerary.info
+  itinerary.info,
+  itinerary.image
   from itinerary
   join member on itinerary.member_id = member.newsId
   where itinerary.id = ${itinId}
@@ -405,37 +406,7 @@ router.put("/edit", function (req, res) {
       });
     }
   });
-
   res.send(JSON.stringify({ result: "ok", itin_id: headData.id }));
-  //
-  //
-  //
-  // let currentID = "";
-  // conn.query(checkItinID, [], function (err, rows) {
-  //   if (err) {
-  //     console.log(JSON.stringify(err));
-  //     return;
-  //   }
-  //   currentID = rows[0].id;
-  //   let sqlInsertItinBody = `insert into spotsbox (itinerary_id, place_id, day, box_order, title, begin, location, lat, lng) values`;
-  //   bodyData.forEach((ele, indexDay) => {
-  //     ele.data.forEach((item, indexBox) => {
-  //       let handleFormate = item.begin.replace(":", "");
-  //       if (indexDay === 0 && indexBox === 0) {
-  //         sqlInsertItinBody += `('${currentID}','${item.place_id}','${item.day}','${item.order}','${item.title}','${handleFormate}','${item.location}','${item.lat}','${item.lng}')`;
-  //       } else {
-  //         sqlInsertItinBody += `, ('${currentID}','${item.place_id}','${item.day}','${item.order}','${item.title}','${handleFormate}','${item.location}','${item.lat}','${item.lng}') `;
-  //       }
-  //     });
-  //   });
-  //   conn.query(sqlInsertItinBody, [], function (err, rows) {
-  //     if (err) {
-  //       console.log(JSON.stringify(err));
-  //       return;
-  //     }
-  //     res.send(JSON.stringify({ result: "ok", itin_id: currentID }));
-  //   });
-  // });
 });
 
 module.exports = router;
