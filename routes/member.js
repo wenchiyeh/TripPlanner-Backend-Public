@@ -57,7 +57,7 @@ router.get("/:id", function (req, res, next) {
         console.log(err);
     }
     console.log(`member ${id} = ${rows}`);
-        res.send(JSON.stringify(rows));
+        res.send(JSON.stringify(rows[0]));
         });
     
 });
@@ -65,7 +65,7 @@ router.get("/:id", function (req, res, next) {
 
 // 更新會員資料
 router.put("/", function (req, res, next) {
-  let { id: newsId } = req.body
+  // let { id: newsId } = req.body
 // update statment
 let sqlKey = `update member set 
     email='${req.body.email}', 
@@ -74,7 +74,7 @@ let sqlKey = `update member set
     member_phone='${req.body.member_phone}', 
     member_sex='${req.body.member_sex}',
     member_id='${req.body.member_id}',
-    member_aboutme='${req.body.member_aboutme}' where newsId=${newsId} or valid=1'`;
+    member_aboutme='${req.body.member_aboutme}' where newsId=${req.body.newsId} or valid=1'`;
 
     const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
@@ -90,18 +90,17 @@ let sqlKey = `update member set
 });
 
 router.put("/:id", function (req, res, next) {
-  console.log("udid:",req.params.newsId)
+  console.log("udid:",req.body.id)
   let sqlKey = `update member set 
-    email=?, 
-    password=?, 
-    member_name=?,  
-    member_phone=?,
-    member_sex=?,
-    member_id=?,
-    member_aboutme=?
-    where email='${req.params.email}' or newsId=${newsId}'`;
+    email='${req.body.email}',
+    member_name='${req.body.member_name}',  
+    member_phone='${req.body.member_phone}',
+    member_sex='${req.body.member_sex}',
+    member_id='${req.body.member_id}',
+    member_aboutme='${req.body.member_aboutme}'
+    where newsId='${req.params.id}'`;
+  // let sqlKey = `update member set
   //   email='${req.body.email}', 
-  //   password='${req.body.password}', 
   //   member_name='${req.body.member_name}',  
   //   member_phone='${req.body.member_phone}',  
   //   birthday='${req.body.birthday}', 
@@ -112,11 +111,11 @@ router.put("/:id", function (req, res, next) {
   //這樣寫才對
   console.log('/ud2',obj);
   
-  conn.query(sqlKey,[], function (err, rows) {
+  conn.query(sqlKey,[req.body.email,,req.body.member_name,req.body.birthday,req.body.member_sex,req.body.member_id,req.body.member_aboutme], function (err, rows) {
     if(err){
         console.log(err);
     }
-        res.send(JSON.stringify(rows));
+        res.send(JSON.stringify({result:'ok'}));
         });
     
 });
