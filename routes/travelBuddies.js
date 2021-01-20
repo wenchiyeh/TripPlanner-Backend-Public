@@ -100,9 +100,9 @@ conn.query(sql,tb_id, function (err, rows) {
 
 //新增揪團
 router.post("/", function (req, res, next) {
-    let sql1="INSERT INTO travelbuddies SET themeName = ?, owner_id = ?, themePhoto = ?, dateBegin = ?, dateEnd = ?, daysCategory_id = ?, lastApprovedDate = ?, personNeeded = ?, genderNeeded = ?, estimatedCost = ?, themeIntro = ?, valid = ? "
+    let sql1="INSERT INTO travelbuddies SET themeName = ?, owner_id = ?, themePhoto = ?, dateBegin = ?, dateEnd = ?, daysCategory_id = ?, lastApprovedDate = ?, personsNeeded = ?, genderNeeded = ?, estimatedCost = ?, themeIntro = ?, valid = ? "
     let sql2="SELECT cityCategory.regionCategory_id FROM cityCategory WHERE cityCategory.id= ?"
-    let sql3="INSERT INTO categoryRelations travelbuddies_id  = ?,regionCategory_id  = ?,cityCategory_id = ?"
+    let sql3="INSERT INTO categoryRelations SET travelbuddies_id  = ?,regionCategory_id  = ?,cityCategory_id = ?"
     conn.beginTransaction(function(err){
         let tbThemeName=req.body.tbThemeName
         let tbThemePhoto=req.body.tbThemePhoto
@@ -115,40 +115,51 @@ router.post("/", function (req, res, next) {
         let tbEstimatedCost=req.body.tbEstimatedCost
         let tbThemeIntro=req.body.tbThemeIntro
         let tbCityCategory=req.body.tbCityCategory
+        console.log(tbCityCategory)
         if(err){
             console.log(err)
         }
-        conn.query(sql1,[tbThemeName, 1, tbThemePhoto, tbDateBegin, tbDateEnd,tbDaysCategory, tbLastApprovedDate, tbPersonsNeeded,tbGenderNeeded,tbEstimatedCost,tbThemeIntro,1],function(err, result) {
+        var query = conn.query(sql1,[tbThemeName, 1, tbThemePhoto, tbDateBegin, tbDateEnd,tbDaysCategory, tbLastApprovedDate, tbPersonsNeeded,tbGenderNeeded,tbEstimatedCost,tbThemeIntro,1],function(err, result) {
+            console.log(query.sql)
             if (err) { 
               conn.rollback(function() {
                 console.log(err)
               });
             }
-            const log = result.insertId;
-            tbCityCategory.foreach(function addCategory(city){
-            conn.query(sql2, city, function(err, result) {
-                if (err) { 
-                  conn.rollback(function() {
-                    console.log(err)
-                  });
-                }
-                let region=result
-                  conn.query(sql3, [log,region,city], function(err, result) {
+            const tb_id = result.insertId;
+            for(let i in tbCityCategory) {
+                let city = tbCityCategory[i]
+                console.log("city:" + city)
+                let query2 = conn.query(sql2, city, function(err2, result2) {
+                    console.log(query2.sql)
                     if (err) { 
                       conn.rollback(function() {
                         console.log(err)
                       });
-                    }  
-                }); 
-              });})//後面這兩個括號是forEach的 前面兩個是SQL2的
-              conn.commit(function(err) {
+                    }
+                    // let region=result
+                    let region = 0
+                    if(result2.length > 0) {
+                        region = result2[0].regionCategory_id
+                    }
+                    var query3 = conn.query(sql3, [tb_id ,region,city], function(err, result) {
+                          console.log(query3.sql)
+                        if (err) { 
+                          conn.rollback(function() {
+                            console.log(err)
+                          });
+                        }  
+                    }); 
+                  });
+            }
+              
+            conn.commit(function(err) {
                 if (err) { 
                   conn.rollback(function() {
                       console.log(err)
                   });
                 }
                 console.log('Transaction Completed Successfully.');
-                connection.end();
               });
             });
           });
