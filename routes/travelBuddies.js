@@ -314,10 +314,10 @@ router.post("/tbsignedup", function (req, res, next) {
         });
 
 //取消報名揪團，半成品
-router.delete("/tbdropout", function (req, res, next) {
-    let id = req.body.id
-    let sql = `DELETE FROM memberssignedup WHERE travelBuddies_id = ${id}, members_id =1`
-    conn.query(sql,[], function (err, rows) {
+router.delete("/tbdropout/:id", function (req, res, next) {
+    let id = req.params.id
+    let sql = `DELETE FROM memberssignedup WHERE travelBuddies_id = ? AND members_id =1`
+    conn.query(sql,[id], function (err, rows) {
         if(err){
             console.log(err);
         }
