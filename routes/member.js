@@ -20,6 +20,7 @@ router.get("/", function (req, res, next) {
   password,
   member_name,
   phone,
+  birthday,
   member_sex,
   member_photo_id,
   member_id,
@@ -73,6 +74,7 @@ let sqlKey = `update member set
     password='${req.body.password}', 
     member_name='${req.body.member_name}',  
     member_phone='${req.body.member_phone}', 
+    birthday ='${req.body.birthday}',
     member_sex='${req.body.member_sex}',
     member_photo_id='${req.body.member_photo_id}',
     member_id='${req.body.member_id}',
@@ -98,6 +100,7 @@ router.put("/:id", function (req, res, next) {
     member_name='${req.body.member_name}',  
     member_phone='${req.body.member_phone}',
     member_sex='${req.body.member_sex}',
+    birthday ='${req.body.birthday}',
     member_photo_id='${req.body.member_photo_id}',
     member_id='${req.body.member_id}',
     member_aboutme='${req.body.member_aboutme}'

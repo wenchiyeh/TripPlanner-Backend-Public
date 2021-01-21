@@ -16,12 +16,14 @@ var conn = mysql.createConnection({
 router.get("/", function (req, res, next) {
     let sql =`SELECT travelbuddies.id, travelbuddies.themeName AS tb_themeName,
      travelbuddies.dateBegin AS tb_dateBegin ,
-      travelbuddies.dateEnd AS tb_dateEnd 
+      travelbuddies.dateEnd AS tb_dateEnd ,
+      area.region AS tb_region
       FROM travelbuddies 
       JOIN categoryRelations ON categoryRelations. travelBuddies_id=travelbuddies.id 
       JOIN cityCategory ON categoryRelations.cityCategory_id=cityCategory.id 
       JOIN regionCategory ON cityCategory.regionCategory_id=regionCategory.id 
       JOIN dayscategory ON travelbuddies.daysCategory_id=daysCategory.id 
+      JOIN area
       WHERE travelbuddies.owner_id = 1 AND travelbuddies.dateEnd>=NOW() 
       GROUP BY travelBuddies.themeName 
       ORDER BY travelBuddies.id;`
