@@ -29,22 +29,7 @@ var conn = mysql.createConnection({
 //     WHERE memberssignedup.members_id = 1 AND travelbuddies.dateEnd>NOW() 
 //     GROUP BY travelBuddies.themeName 
 //     ORDER BY travelBuddies.id;`
-    
-    // `select categoryRelations.*, 
-    //     citycategory.city as city, 
-    //     regioncategory.region as region from categoryRelations
-    //     JOIN cityCategory ON categoryRelations.cityCategory_id=cityCategory.id 
-    //     JOIN regionCategory ON cityCategory.regionCategory_id=regionCategory.id 
-    //     ON categoryRelations.travelBuddies_id=travelbuddies.id;`
 
-// conn.query(sql,[], function (err, rows) {
-//     if(err){
-//         console.log(err);
-//     }
-//         res.send(JSON.stringify(rows));
-//         });
-    
-// });
 router.post("/", function (req, res, next) {
     let sql =`SELECT travelbuddies.id, member.member_name AS tb_owner,
      travelbuddies.themeName AS tb_themeName,
