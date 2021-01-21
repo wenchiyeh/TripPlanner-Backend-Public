@@ -66,7 +66,7 @@ router.post("/", function (req, res, next) {
            WHERE travelbuddies.id = 19 
            GROUP BY travelBuddies.themeName 
            ORDER BY travelBuddies.id;`
-           
+
 conn.query(sql,[], function (err, rows) {
     if(err){
         console.log(err);
