@@ -50,12 +50,8 @@ app.use("/travelbuddies", tbRouter);
 
 app.use("/productList", buRouter);
 app.use("/historyOrder", roRouter);
-<<<<<<< HEAD
 // app.use("/paymentaction", poyRouter);
 
-=======
-app.use("/eco", coRouter);
->>>>>>> a4f409c6cb248b024916e0b852c317b32b4839a9
 
 app.use("/tbmyaccount", tbmyaccountRouter);
 app.use("/test", testRouter);
