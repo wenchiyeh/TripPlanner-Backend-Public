@@ -5,8 +5,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
 
-// 金流
-const ecpay_payment = require("ecpay_payment_nodejs");
+
 
 //自定義路由檔案
 var indexRouter = require("./routes/index");
@@ -16,7 +15,7 @@ var tbRouter = require("./routes/travelBuddies");
 
 var roRouter = require("./routes/histroyOrder");
 var buRouter = require("./routes/ProductsList");
-var coRouter = require("./routes/controller");
+// var poyRouter = require("./routes/payment")
 
 var tbmyaccountRouter = require("./routes/tbMyAccount");
 var testRouter = require("./routes/test");
@@ -51,7 +50,8 @@ app.use("/travelbuddies", tbRouter);
 
 app.use("/productList", buRouter);
 app.use("/historyOrder", roRouter);
-app.use("/controller", coRouter);
+// app.use("/paymentaction", poyRouter);
+
 
 app.use("/tbmyaccount", tbmyaccountRouter);
 app.use("/test", testRouter);
