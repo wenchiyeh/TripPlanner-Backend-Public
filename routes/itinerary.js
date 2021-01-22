@@ -60,22 +60,22 @@ router.get("/", function (req, res, next) {
   keyword = keyword.replace(/[\/.,{}\[\]()=*%$#@!&|]/g, "");
   let dayOption = `and itinerary.duration `;
   switch (day) {
-    case 0:
+    case "0":
       dayOption = "";
       break;
-    case 1:
+    case "1":
       dayOption += "= 1";
       break;
-    case 2:
+    case "2":
       dayOption += "between 2 and 3";
       break;
-    case 3:
+    case "3":
       dayOption += "between 4 and 5";
       break;
-    case 4:
+    case "4":
       dayOption += "between 6 and 7";
       break;
-    case 5:
+    case "5":
       dayOption += "> 7";
       break;
   }
@@ -117,7 +117,7 @@ router.get("/", function (req, res, next) {
   member.member_id as nickname
   from itinerary
   join member on itinerary.member_id = member.newsId
-  where itinerary.publish_time != 'null' and `;
+  where itinerary.publish_time != 'null' ${dayOption} and `;
 
   area === "" && town === "" && day === 0 && keyword === ""
     ? (sqlGetFilterList += `itinerary.valid = 1`)
