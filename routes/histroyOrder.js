@@ -16,19 +16,9 @@ conn.connect(function(err){
     }
 })
 
+
 router.get(`/`, function (req, res, next) {
-    let sql  = `SELECT orderhistory.*,
-    member.member_name as user_Name,
-    member.birthday as user_birthday,
-    member.email as user_mail,
-    member.member_sex as gender,
-    member.member_phone as user_phone,
-    products.className as class_Name
-    from orderhistory
-    join member on orderhistory.userId = member.newsId
-    join products on orderhistory.productID = products.id
-    ORDER BY orderhistory.id DESC
-   `
+    let sql = `SELECT orderhistory.* from orderhistory ORDER BY orderhistory.id DESC`;
 conn.query(sql,[], function (err, rows) {
     if(err){
         console.log(err);
@@ -37,72 +27,50 @@ conn.query(sql,[], function (err, rows) {
         });
     
 });
-router.get(`/:id`, function (req, res, next) {
-     let orderId = req.params.id;
-    let sql  = `SELECT orderhistory.*,
-    member.member_name as user_Name,
-    member.birthday as user_birthday,
-    member.email as user_mail,
-    member.member_sex as gender,
-    member.member_phone as user_phone,
-    products.className as class_Name
-    from orderhistory
-    join member on orderhistory.userId = member.newsId
-    join products on orderhistory.productID = products.id
-    where orderhistory.id = ${orderId}
-    ORDER BY orderhistory.id DESC
-   `
-conn.query(sql,[], function (err, rows) {
-    if(err){
-        console.log(err);
+router.get(`/:orderId`, function (req, res, next) {
+  let orderId = req.params.orderId;
+  let sql = `SELECT * from orderhistory where orderhistory.id = '${orderId}'`;
+  conn.query(sql, [], function (err, rows) {
+    if (err) {
+      console.log(err);
     }
-        res.send(JSON.stringify(rows));
-        });
-    
+    res.send(JSON.stringify(rows));
+  });
 });
 
 
-// router.post(`/create`, function (req, res, next) {
-//     let sql1 = `INSERT INTO travelbuddies themeName = ?,
-//     owner_id = ?,
-//     themePhoto = ?,
-//     dateBegin = ?,
-//     dateEnd = ?, 
-//     daysCategory_id = ?, 
-//     lastApprovedDate = ?, 
-//     personNeeded = ?, 
-//     genderNeeded = ?, 
-//     estimatedCost = ?, 
-//     themeIntro = ?, 
-//     valid = ? `
-//     let sql2 = `INSERT INTO categoryRelations travelbuddies_id = ?,
-//     regionCategory_id  =  ?,
-//     cityCategory_id = ?`
-//     conn.beginTransaction
-//     res.send(`已連線`)
-    
-// })
 
-// router.put(`/update`, function (req, res, next) {
-//     let sql1 = ` travelbuddies themeName  =  ?,
-//     owner_id = ?, 
-//     themePhoto = ?, 
-//     dateBegin = ?, 
-//     dateEnd = ?, 
-//     daysCategory_id = ?, 
-//     lastApprovedDate = ?, 
-//     personNeeded = ?, 
-//     genderNeeded = ?, 
-//     estimatedCost = ?, 
-//     themeIntro = ?, 
-//     valid = ? `
-//     let sql2 = `INSERT INTO categoryRelations travelbuddies_id = ?,
-//     regionCategory_id = ?,
-//     cityCategory_id = ?`
-//     conn.beginTransaction
-//     res.send(`已連線`)
-    
-// })
+router.post("/gohistory", function (req, res, next) {
+let data =req.body
+let user_name = data.user_name
+let ticket_number = data.ticket_number;
+let className=data.className
+let buy_ticket_type = data.buy_ticket_type
+let totalTicket = data.totalTicket
+let buy_ticket_price = data.buy_ticket_price;
+let buy_ticket_day = data.buy_ticket_day;
+let user_gender = data.user_gender;
+let user_phone = data.user_phone;
+let user_mail = data.user_mail;
+let user_birthday = data.user_birthday;
+let credit = data.credit;
+
+
+
+
+  console.log(req.body);
+  let keysql = `INSERT INTO orderhistory (user_name, gender, phone, mail, birthday, ticket_type, price, className, ticketNumber, purchaseDate, payfor, many) VALUES ('${user_name}','${user_gender}','${user_phone}','${user_mail}','${user_birthday}','${buy_ticket_type}','${buy_ticket_price}','${className}','${ticket_number}','${buy_ticket_day}','${credit}','${totalTicket}')`;
+   conn.query(keysql, [], function (err, rows) {
+     if (err) {
+       console.log(JSON.stringify(err));
+       return;
+     }
+   });
+
+
+});
+
+
 
 
 
