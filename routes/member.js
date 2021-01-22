@@ -76,9 +76,10 @@ let sqlKey = `update member set
     member_phone='${req.body.member_phone}', 
     birthday ='${req.body.birthday}',
     member_sex='${req.body.member_sex}',
-    member_photo_id='${req.body.member_photo_id}',
     member_id='${req.body.member_id}',
-    member_aboutme='${req.body.member_aboutme}' where newsId=${req.body.newsId} or valid=1'`;
+    member_photo_id='${req.body.member_photo_id}',
+    member_aboutme='${req.body.member_aboutme}'
+    where newsId=${req.body.newsId} or valid=1'`;
 
     const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
@@ -102,6 +103,7 @@ router.put("/:id", function (req, res, next) {
     member_sex='${req.body.member_sex}',
     birthday ='${req.body.birthday}',
     member_id='${req.body.member_id}',
+    member_photo_id='${req.body.member_photo_id}',
     member_aboutme='${req.body.member_aboutme}'
     where newsId='${req.params.id}'`;
   // let sqlKey = `update member set
@@ -116,7 +118,7 @@ router.put("/:id", function (req, res, next) {
   //這樣寫才對
   console.log('/ud2',obj);
   
-  conn.query(sqlKey,[req.body.email,req.body.member_name,req.body.birthday,req.body.member_sex,req.body.member_id,req.body.member_aboutme], function (err, rows) {
+  conn.query(sqlKey,[req.body.member_photo_id,req.body.email,req.body.member_name,req.body.birthday,req.body.member_sex,req.body.member_id,req.body.member_aboutme], function (err, rows) {
     if(err){
         console.log(err);
     }
