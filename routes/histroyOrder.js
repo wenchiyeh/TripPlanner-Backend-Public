@@ -52,14 +52,13 @@ let buy_ticket_day = data.buy_ticket_day;
 let user_gender = data.user_gender;
 let user_phone = data.user_phone;
 let user_mail = data.user_mail;
-let user_birthday = data.user_birthday;
 let credit = data.credit;
 
 
 
 
   console.log(req.body);
-  let keysql = `INSERT INTO orderhistory (user_name, gender, phone, mail, birthday, ticket_type, price, className, ticketNumber, purchaseDate, payfor, many) VALUES ('${user_name}','${user_gender}','${user_phone}','${user_mail}','${user_birthday}','${buy_ticket_type}','${buy_ticket_price}','${className}','${ticket_number}','${buy_ticket_day}','${credit}','${totalTicket}')`;
+  let keysql = `INSERT INTO orderhistory (user_name, gender, phone, mail, ticket_type, price, className, ticketNumber, purchaseDate, payfor, many) VALUES ('${user_name}','${user_gender}','${user_phone}','${user_mail}','${buy_ticket_type}','${buy_ticket_price}','${className}','${ticket_number}','${buy_ticket_day}','${credit}','${totalTicket}')`;
    conn.query(keysql, [], function (err, rows) {
      if (err) {
        console.log(JSON.stringify(err));
