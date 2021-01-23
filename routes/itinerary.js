@@ -149,6 +149,7 @@ router.get("/:itinId", function (req, res, next) {
   let returnData = [{}, {}];
   let sqlGetItin = `select
   member.member_name,
+  member.member_photo_id,
   itinerary.member_id,
   itinerary.title,
   itinerary.region,

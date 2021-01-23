@@ -71,42 +71,43 @@ app.use("/meFavoritesgroup", meFavoritesgroupRouter);
 //圖片上傳
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, __dirname + "/public/images/upload");
+    let dir = "";
+    if (req.params.dir) dir = `/${req.params.dir}`;
+    cb(null, __dirname + "/public/images" + dir);
   },
   filename: function (req, file, cb) {
     cb(null, hash.generateHash({ length: 8 }) + file.originalname);
   },
 });
 var upload = multer({ storage: storage });
-app.post("/upload", upload.array("file"), function (req, res) {
-  let url = "/upload";
+app.post("/upload/:dir?", upload.array("file"), function (req, res) {
+  let dir = "";
+  if (req.params.dir) dir = `/${req.params.dir}`;
   let name = [];
   req.files.forEach((ele) => {
     name.push(ele.filename);
   });
-  res.send(JSON.stringify({ data: url, name: name }));
+  res.send(JSON.stringify({ data: dir, name: name }));
 });
 //
 //會員圖片上傳
-var storageMember = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, __dirname + "/public/images/userphoto");
-  },
-  filename: function (req, file, cb) {
-    cb(null, hash.generateHash({ length: 8 }) + file.originalname);
-  },
-});
-var uploadMember = multer({ storage: storageMember });
-app.post("/upload/member", uploadMember.array("file"), function (req, res) {
-  let url = "/userphoto";
-  let name = [];
-  req.files.forEach((ele) => {
-    name.push(ele.filename);
-  });
-  res.send(JSON.stringify({ data: url, name: name }));
-});
-
-//
+// var storageMember = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, __dirname + "/public/images/userphoto");
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, hash.generateHash({ length: 8 }) + file.originalname);
+//   },
+// });
+// var uploadMember = multer({ storage: storageMember });
+// app.post("/upload/member", uploadMember.array("file"), function (req, res) {
+//   let url = "/userphoto";
+//   let name = [];
+//   req.files.forEach((ele) => {
+//     name.push(ele.filename);
+//   });
+//   res.send(JSON.stringify({ data: url, name: name }));
+// });
 //
 // app.post("/upload", function (req, res) {
 //   //測試fetch
