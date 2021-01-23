@@ -87,7 +87,7 @@ app.post("/upload/:dir?", upload.array("file"), function (req, res) {
   req.files.forEach((ele) => {
     name.push(ele.filename);
   });
-  res.send(JSON.stringify({ data: dir, name: name }));
+  res.send(JSON.stringify({ url: dir, name: name }));
 });
 //
 //會員圖片上傳
