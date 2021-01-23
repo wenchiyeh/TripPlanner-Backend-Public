@@ -82,7 +82,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 app.post("/upload/:dir?", upload.array("file"), function (req, res) {
   let dir = "";
-  if (req.params.dir) dir = `/${req.params.dir}`;
+  if (req.params.dir) dir = `${req.params.dir}/`;
   let name = [];
   req.files.forEach((ele) => {
     name.push(ele.filename);
