@@ -235,10 +235,9 @@ router.post("/tbrating", function (req, res, next) {
 
 //取得星等
 router.get("/tbrating/:id", function (req, res, next) {
-  let tb_id=req.params.tb_id
-  let sql = `SELECT AVG(rating) FROM rating WHERE travelBuddies_id=? AND member_id=?`
-  const query=conn.query(sql,[tb_id,1], function (err, rows) {
-    console.log(query)
+  let tb_id=req.params.id
+  let sql = `SELECT AVG(rating) AS rating FROM rating WHERE travelBuddies_id=? AND member_id=?`
+  conn.query(sql,[tb_id,1], function (err, rows) {
       if(err){
           console.log(err);
       }
