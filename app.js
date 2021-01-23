@@ -71,7 +71,7 @@ app.use("/meFavoritesgroup", meFavoritesgroupRouter);
 //圖片上傳
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, __dirname + "/public/upload");
+    cb(null, __dirname + "/public/images/upload");
   },
   filename: function (req, file, cb) {
     cb(null, hash.generateHash({ length: 8 }) + file.originalname);
@@ -79,7 +79,6 @@ var storage = multer.diskStorage({
 });
 var upload = multer({ storage: storage });
 app.post("/upload", upload.array("file"), function (req, res) {
-  console.log(req.files);
   let url = "/upload";
   let name = [];
   req.files.forEach((ele) => {
