@@ -79,7 +79,7 @@ let sqlKey = `update member set
     member_id='${req.body.member_id}',
     member_photo_id='${req.body.member_photo_id}',
     member_aboutme='${req.body.member_aboutme}'
-    where newsId=${req.body.newsId} or valid=1'`;
+    where newsId=${req.body.newsId} or valid=1`;
 
     const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
