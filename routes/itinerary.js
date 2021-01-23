@@ -2,15 +2,8 @@ var express = require("express");
 var router = express.Router();
 //使用環境參數
 require("dotenv").config();
+var conn = require("../dbConnect");
 //
-var mysql = require("mysql");
-var conn = mysql.createConnection({
-  host: process.env["dbhost"],
-  user: process.env["dbuser"],
-  password: process.env["dbpassword"],
-  database: process.env["database"],
-});
-
 function cityToRegion(city) {
   let region = "北部";
   switch (city) {
@@ -60,22 +53,22 @@ router.get("/", function (req, res, next) {
   keyword = keyword.replace(/[\/.,{}\[\]()=*%$#@!&|]/g, "");
   let dayOption = `and itinerary.duration `;
   switch (day) {
-    case 0:
+    case "0":
       dayOption = "";
       break;
-    case 1:
+    case "1":
       dayOption += "= 1";
       break;
-    case 2:
+    case "2":
       dayOption += "between 2 and 3";
       break;
-    case 3:
+    case "3":
       dayOption += "between 4 and 5";
       break;
-    case 4:
+    case "4":
       dayOption += "between 6 and 7";
       break;
-    case 5:
+    case "5":
       dayOption += "> 7";
       break;
   }
@@ -117,7 +110,7 @@ router.get("/", function (req, res, next) {
   member.member_id as nickname
   from itinerary
   join member on itinerary.member_id = member.newsId
-  where itinerary.publish_time != 'null' and `;
+  where itinerary.publish_time != 'null' ${dayOption} and `;
 
   area === "" && town === "" && day === 0 && keyword === ""
     ? (sqlGetFilterList += `itinerary.valid = 1`)
@@ -149,6 +142,7 @@ router.get("/:itinId", function (req, res, next) {
   let returnData = [{}, {}];
   let sqlGetItin = `select
   member.member_name,
+  member.member_photo_id,
   itinerary.member_id,
   itinerary.title,
   itinerary.region,
@@ -158,7 +152,8 @@ router.get("/:itinId", function (req, res, next) {
   itinerary.heart,
   itinerary.keep, 
   itinerary.view,
-  itinerary.info
+  itinerary.info,
+  itinerary.image
   from itinerary
   join member on itinerary.member_id = member.newsId
   where itinerary.id = ${itinId}
@@ -405,37 +400,87 @@ router.put("/edit", function (req, res) {
       });
     }
   });
-
   res.send(JSON.stringify({ result: "ok", itin_id: headData.id }));
+});
+//
+//
+//行程發表/修改
+router.put("/publish/:itin_id", function (req, res) {
+  let id = req.params.itin_id;
+  let itinData = req.body[0]; //行程主資料
+  let boxData = req.body[1]; //box資料
+  //處理時間
+  let time = new Date();
+  let nowArray = [
+    (time.getMonth() + 1).toString(),
+    time.getDate().toString(),
+    time.getHours().toString(),
+    time.getMinutes().toString(),
+  ];
+  let nowStr = "" + time.getFullYear();
+  nowArray.forEach((ele) => {
+    if (Array.from(ele).length < 2) {
+      nowStr += `0${ele}`;
+    } else {
+      nowStr += ele;
+    }
+  });
+
+  boxData.forEach((item) => {
+    if (item.image === null && item.text === "") return;
+    let sqlArray = [];
+    let valueArray = [];
+    sqlArray.push(`update spotsbox set `);
+    if (item.image !== null) {
+      sqlArray.push(`image = ? `);
+      valueArray.push(item.image);
+    }
+    if (item.text !== null) {
+      sqlArray.push(`info = ? `);
+      valueArray.push(item.text);
+    }
+    let boxSql = "";
+    sqlArray.forEach((sqlItem, index) => {
+      if (index > 1) boxSql += ", ";
+      boxSql += sqlItem;
+    });
+    boxSql += ` where valid = 1 and itinerary_id = '${id}' and day = '${item.day}' and box_order = '${item.order}'`;
+    conn.query(boxSql, valueArray, function (err, rows) {
+      if (err) {
+        console.log(JSON.stringify(err));
+        return;
+      }
+    });
+
+    let itinSql = `update itinerary set info = ?, image = (select spotsbox.image from spotsbox where valid = 1 and itinerary_id = '${id}' and day = '${itinData.imageIndex.slice(
+      0,
+      1
+    )}' and box_order = '${itinData.imageIndex.slice(
+      1,
+      1
+    )}' ), publish_time = ? where valid = 1 and id = '${id}'`;
+    conn.query(itinSql, [itinData.info, nowStr], function (err, rows) {
+      if (err) {
+        console.log(JSON.stringify(err));
+        return;
+      }
+    });
+  });
+
+  res.send(JSON.stringify({ result: "ok" }));
   //
-  //
-  //
-  // let currentID = "";
-  // conn.query(checkItinID, [], function (err, rows) {
-  //   if (err) {
-  //     console.log(JSON.stringify(err));
-  //     return;
-  //   }
-  //   currentID = rows[0].id;
-  //   let sqlInsertItinBody = `insert into spotsbox (itinerary_id, place_id, day, box_order, title, begin, location, lat, lng) values`;
-  //   bodyData.forEach((ele, indexDay) => {
-  //     ele.data.forEach((item, indexBox) => {
-  //       let handleFormate = item.begin.replace(":", "");
-  //       if (indexDay === 0 && indexBox === 0) {
-  //         sqlInsertItinBody += `('${currentID}','${item.place_id}','${item.day}','${item.order}','${item.title}','${handleFormate}','${item.location}','${item.lat}','${item.lng}')`;
-  //       } else {
-  //         sqlInsertItinBody += `, ('${currentID}','${item.place_id}','${item.day}','${item.order}','${item.title}','${handleFormate}','${item.location}','${item.lat}','${item.lng}') `;
-  //       }
-  //     });
-  //   });
-  //   conn.query(sqlInsertItinBody, [], function (err, rows) {
-  //     if (err) {
-  //       console.log(JSON.stringify(err));
-  //       return;
-  //     }
-  //     res.send(JSON.stringify({ result: "ok", itin_id: currentID }));
-  //   });
-  // });
+});
+//
+router.put("/unpublish/:itin_id", function (req, res) {
+  let id = req.params.itin_id;
+  let sql = `update itinerary set publish_time = null where itinerary.id = '${id}'`;
+  conn.query(sql, [], function (err, rows) {
+    if (err) {
+      console.log(JSON.stringify(err));
+      return;
+    }
+  });
+  res.send(JSON.stringify({ result: "ok" }));
 });
 
 module.exports = router;
