@@ -3,14 +3,7 @@ var express = require("express");
 var router = express.Router();
 //使用環境參數
 require("dotenv").config();
-
-var mysql = require("mysql");
-var conn = mysql.createConnection({
-  host: process.env["dbhost"],
-  user: process.env["dbuser"],
-  password: process.env["dbpassword"],
-  database: process.env["database"],
-});
+var conn = require("../dbConnect");
 
 //我的揪團
 // router.get("/", function (req, res, next) {
@@ -20,18 +13,18 @@ var conn = mysql.createConnection({
 //     memberssignedup.membersStatus AS tb_membersStatus,
 //     regioncategory.region AS tb_region,
 //     citycategory.city AS tb_city
-//     FROM travelbuddies 
+//     FROM travelbuddies
 //     INNER JOIN categoryrelations
 //     INNER JOIN citycategory
 //     JOIN regioncategory
-//     JOIN dayscategory ON travelbuddies.daysCategory_id=daysCategory.id 
-//     JOIN memberssignedup ON travelbuddies.id=memberssignedup.travelBuddies_id 
-//     WHERE memberssignedup.members_id = 1 AND travelbuddies.dateEnd>NOW() 
-//     GROUP BY travelBuddies.themeName 
+//     JOIN dayscategory ON travelbuddies.daysCategory_id=daysCategory.id
+//     JOIN memberssignedup ON travelbuddies.id=memberssignedup.travelBuddies_id
+//     WHERE memberssignedup.members_id = 1 AND travelbuddies.dateEnd>NOW()
+//     GROUP BY travelBuddies.themeName
 //     ORDER BY travelBuddies.id;`
 
 router.post("/", function (req, res, next) {
-    let sql =`SELECT travelbuddies.id, member.member_name AS tb_owner,
+  let sql = `SELECT travelbuddies.id, member.member_name AS tb_owner,
      travelbuddies.themeName AS tb_themeName,
       travelbuddies.personsNeeded AS tb_personsNeeded,
       travelbuddies.genderNeeded AS tb_genderNeeded,
@@ -50,20 +43,18 @@ router.post("/", function (req, res, next) {
            JOIN dayscategory ON travelbuddies.daysCategory_id=daysCategory.id 
            WHERE travelbuddies.id = 19 
            GROUP BY travelBuddies.themeName 
-           ORDER BY travelBuddies.id;`
+           ORDER BY travelBuddies.id;`;
 
-conn.query(sql,[], function (err, rows) {
-    if(err){
-        console.log(err);
+  conn.query(sql, [], function (err, rows) {
+    if (err) {
+      console.log(err);
     }
-        res.send(JSON.stringify(rows));
-        });
-    
+    res.send(JSON.stringify(rows));
+  });
 });
 
-
 router.get("/", function (req, res, next) {
-    let sql =`SELECT travelbuddies.id, travelbuddies.themeName AS tb_themeName,
+  let sql = `SELECT travelbuddies.id, travelbuddies.themeName AS tb_themeName,
      travelbuddies.dateBegin AS tb_dateBegin ,
       travelbuddies.dateEnd AS tb_dateEnd,
        memberssignedup.membersStatus AS tb_membersStatus 
@@ -75,15 +66,14 @@ router.get("/", function (req, res, next) {
        JOIN memberssignedup ON travelbuddies.id=memberssignedup.travelBuddies_id 
        WHERE memberssignedup.members_id = 1 AND travelbuddies.dateEnd>NOW() 
        GROUP BY travelBuddies.themeName 
-       ORDER BY travelBuddies.id;`
-conn.query(sql,[], function (err, rows) {
-    if(err){
-        console.log(err);
+       ORDER BY travelBuddies.id;`;
+  conn.query(sql, [], function (err, rows) {
+    if (err) {
+      console.log(err);
     }
-        res.send(JSON.stringify(rows));
-        });
-    
-})
+    res.send(JSON.stringify(rows));
+  });
+});
 // router.get('/', function (req, res, next) {
 //     let sql = `selcet mefavoritesgroup.*,
 //     travelbuddies.themeName as mef_title,
@@ -91,7 +81,7 @@ conn.query(sql,[], function (err, rows) {
 //     travelbuddies.dateEnd as mef_dend,
 //     citycategory.id as mef_city,
 //     regioncategory.id as mef_erg
-//     from mefavoritesgroup 
+//     from mefavoritesgroup
 //     join travelbuddies on travelbuddies.id = mefavoritesgroup.group_title
 //     join citycategory on citycategory.id = mefavoritesgroup.group_area1
 //     join regioncategoryon regioncategory.id = mefavoritesgroup.group_area2
@@ -116,7 +106,7 @@ conn.query(sql,[], function (err, rows) {
 //     }
 //         res.send(JSON.stringify(rows));
 //         });
-    
+
 // });
 
 // router.get('/:id', function (req, res, next) {
@@ -127,7 +117,7 @@ conn.query(sql,[], function (err, rows) {
 //     travelbuddies.dateEnd as mef_dend,
 //     citycategory.id as mef_city,
 //     regioncategory.id as mef_erg
-//     from mefavoritesgroup 
+//     from mefavoritesgroup
 //     join travelbuddies on travelbuddies.id = mefavoritesgroup.group_title
 //     join citycategory on citycategory.id = mefavoritesgroup.group_area1
 //     join regioncategoryon regioncategory.id = mefavoritesgroup.group_area2
@@ -140,7 +130,7 @@ conn.query(sql,[], function (err, rows) {
 //         }
 //             res.send(JSON.stringify(rows));
 //             });
-        
+
 //     });
 
-module.exports  =  router;
+module.exports = router;
