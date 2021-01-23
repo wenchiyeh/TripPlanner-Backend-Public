@@ -2,15 +2,8 @@ var express = require("express");
 var router = express.Router();
 //使用環境參數
 require("dotenv").config();
+var conn = require("../dbConnect");
 //
-var mysql = require("mysql");
-var conn = mysql.createConnection({
-  host: process.env["dbhost"],
-  user: process.env["dbuser"],
-  password: process.env["dbpassword"],
-  database: process.env["database"],
-});
-
 function cityToRegion(city) {
   let region = "北部";
   switch (city) {
@@ -459,7 +452,13 @@ router.put("/publish/:itin_id", function (req, res) {
       }
     });
 
-    let itinSql = `update itinerary set info = ?, image = (select spotsbox.image from spotsbox where valid = 1 and itinerary_id = '${id}' and day = '${item.day}' and box_order = '${item.order}' ), publish_time = ? where valid = 1 and id = '${id}'`;
+    let itinSql = `update itinerary set info = ?, image = (select spotsbox.image from spotsbox where valid = 1 and itinerary_id = '${id}' and day = '${itinData.imageIndex.slice(
+      0,
+      1
+    )}' and box_order = '${itinData.imageIndex.slice(
+      1,
+      1
+    )}' ), publish_time = ? where valid = 1 and id = '${id}'`;
     conn.query(itinSql, [itinData.info, nowStr], function (err, rows) {
       if (err) {
         console.log(JSON.stringify(err));

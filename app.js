@@ -58,16 +58,6 @@ app.use("/udmember", udmemberRouter);
 //收藏
 app.use("/meFavoritesgroup", meFavoritesgroupRouter);
 //
-//
-//資料庫連線
-// var mysql = require("mysql");
-// var conn = mysql.createConnection({
-//   host: process.env["dbhost"],
-//   user: process.env["dbuser"],
-//   password: process.env["dbpassword"],
-//   database: process.env["database"],
-// });
-//
 //圖片上傳
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -76,7 +66,7 @@ var storage = multer.diskStorage({
     cb(null, __dirname + "/public/images" + dir);
   },
   filename: function (req, file, cb) {
-    cb(null, hash.generateHash({ length: 8 }) + file.originalname);
+    cb(null, hash.generateHash({ length: 8 }) + file.originalname.slice(-7));
   },
 });
 var upload = multer({ storage: storage });
