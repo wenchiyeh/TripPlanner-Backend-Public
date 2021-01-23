@@ -65,9 +65,10 @@ router.put("/", function (req, res, next) {
     member_phone='${req.body.member_phone}', 
     birthday ='${req.body.birthday}',
     member_sex='${req.body.member_sex}',
-    member_photo_id='${req.body.member_photo_id}',
     member_id='${req.body.member_id}',
-    member_aboutme='${req.body.member_aboutme}' where newsId=${req.body.newsId} or valid=1'`;
+    member_photo_id='${req.body.member_photo_id}',
+    member_aboutme='${req.body.member_aboutme}'
+    where newsId=${req.body.newsId} or valid=1'`;
 
   const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
@@ -89,8 +90,8 @@ router.put("/:id", function (req, res, next) {
     member_phone='${req.body.member_phone}',
     member_sex='${req.body.member_sex}',
     birthday ='${req.body.birthday}',
-    member_photo_id='${req.body.member_photo_id}',
     member_id='${req.body.member_id}',
+    member_photo_id='${req.body.member_photo_id}',
     member_aboutme='${req.body.member_aboutme}'
     where newsId='${req.params.id}'`;
   // let sqlKey = `update member set
@@ -123,6 +124,22 @@ router.put("/:id", function (req, res, next) {
       res.send(JSON.stringify({ result: "ok" }));
     }
   );
+});
+
+//上傳圖片
+router.get('/', async(req, res, next) => {
+  try {
+    const [user] = await db.query(`SELECT img FROM user WHERE userId = "${req.session.user.userId}"`);
+    // 轉換格式
+    user.img = Buffer.from(user.img).toString('base64')
+    
+    res.send({
+       success: true,
+       user,
+    });
+  } catch(err) {
+    next(err.sqlMessage || err);
+  }
 });
 
 module.exports = router;
