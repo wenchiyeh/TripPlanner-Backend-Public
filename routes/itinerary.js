@@ -60,22 +60,22 @@ router.get("/", function (req, res, next) {
   keyword = keyword.replace(/[\/.,{}\[\]()=*%$#@!&|]/g, "");
   let dayOption = `and itinerary.duration `;
   switch (day) {
-    case 0:
+    case "0":
       dayOption = "";
       break;
-    case 1:
+    case "1":
       dayOption += "= 1";
       break;
-    case 2:
+    case "2":
       dayOption += "between 2 and 3";
       break;
-    case 3:
+    case "3":
       dayOption += "between 4 and 5";
       break;
-    case 4:
+    case "4":
       dayOption += "between 6 and 7";
       break;
-    case 5:
+    case "5":
       dayOption += "> 7";
       break;
   }
@@ -117,7 +117,7 @@ router.get("/", function (req, res, next) {
   member.member_id as nickname
   from itinerary
   join member on itinerary.member_id = member.newsId
-  where itinerary.publish_time != 'null' and `;
+  where itinerary.publish_time != 'null' ${dayOption} and `;
 
   area === "" && town === "" && day === 0 && keyword === ""
     ? (sqlGetFilterList += `itinerary.valid = 1`)
@@ -149,6 +149,7 @@ router.get("/:itinId", function (req, res, next) {
   let returnData = [{}, {}];
   let sqlGetItin = `select
   member.member_name,
+  member.member_photo_id,
   itinerary.member_id,
   itinerary.title,
   itinerary.region,
@@ -158,7 +159,8 @@ router.get("/:itinId", function (req, res, next) {
   itinerary.heart,
   itinerary.keep, 
   itinerary.view,
-  itinerary.info
+  itinerary.info,
+  itinerary.image
   from itinerary
   join member on itinerary.member_id = member.newsId
   where itinerary.id = ${itinId}
@@ -405,37 +407,7 @@ router.put("/edit", function (req, res) {
       });
     }
   });
-
   res.send(JSON.stringify({ result: "ok", itin_id: headData.id }));
-  //
-  //
-  //
-  // let currentID = "";
-  // conn.query(checkItinID, [], function (err, rows) {
-  //   if (err) {
-  //     console.log(JSON.stringify(err));
-  //     return;
-  //   }
-  //   currentID = rows[0].id;
-  //   let sqlInsertItinBody = `insert into spotsbox (itinerary_id, place_id, day, box_order, title, begin, location, lat, lng) values`;
-  //   bodyData.forEach((ele, indexDay) => {
-  //     ele.data.forEach((item, indexBox) => {
-  //       let handleFormate = item.begin.replace(":", "");
-  //       if (indexDay === 0 && indexBox === 0) {
-  //         sqlInsertItinBody += `('${currentID}','${item.place_id}','${item.day}','${item.order}','${item.title}','${handleFormate}','${item.location}','${item.lat}','${item.lng}')`;
-  //       } else {
-  //         sqlInsertItinBody += `, ('${currentID}','${item.place_id}','${item.day}','${item.order}','${item.title}','${handleFormate}','${item.location}','${item.lat}','${item.lng}') `;
-  //       }
-  //     });
-  //   });
-  //   conn.query(sqlInsertItinBody, [], function (err, rows) {
-  //     if (err) {
-  //       console.log(JSON.stringify(err));
-  //       return;
-  //     }
-  //     res.send(JSON.stringify({ result: "ok", itin_id: currentID }));
-  //   });
-  // });
 });
 
 module.exports = router;
