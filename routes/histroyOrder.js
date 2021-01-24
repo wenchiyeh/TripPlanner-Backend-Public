@@ -1,31 +1,15 @@
-var express  =  require(`express`);
-var router  =  express.Router();
-
-var mysql  =  require('mysql');
-
-var conn  =  mysql.createConnection({
-   host: process.env["dbhost"],
-  user: process.env["dbuser"],
-  password: process.env["dbpassword"],
-  database: process.env["database"],
-});
-
-conn.connect(function(err){
-    if(err){
-        console.log(err);
-    }
-})
-
+var express = require(`express`);
+var router = express.Router();
+var conn = require("../dbConnect");
 
 router.get(`/`, function (req, res, next) {
-    let sql = `SELECT orderhistory.* from orderhistory ORDER BY orderhistory.id DESC`;
-conn.query(sql,[], function (err, rows) {
-    if(err){
-        console.log(err);
+  let sql = `SELECT orderhistory.* from orderhistory ORDER BY orderhistory.id DESC`;
+  conn.query(sql, [], function (err, rows) {
+    if (err) {
+      console.log(err);
     }
-        res.send(JSON.stringify(rows));
-        });
-    
+    res.send(JSON.stringify(rows));
+  });
 });
 router.get(`/:orderId`, function (req, res, next) {
   let orderId = req.params.orderId;
@@ -38,9 +22,8 @@ router.get(`/:orderId`, function (req, res, next) {
   });
 });
 
-
-
 router.post("/gohistory", function (req, res, next) {
+
 let data =req.body
 let user_name = data.user_name
 let ticket_number = data.ticket_number;
@@ -66,11 +49,6 @@ let credit = data.credit;
      }
    });
 
-
 });
 
-
-
-
-
-module.exports  =  router;
+module.exports = router;

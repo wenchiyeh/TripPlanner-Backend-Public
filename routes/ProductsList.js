@@ -1,27 +1,11 @@
-var express  =  require(`express`);
-var router  =  express.Router();
-
-var mysql  =  require('mysql');
-
-var conn  =  mysql.createConnection({
-   host: process.env["dbhost"],
-  user: process.env["dbuser"],
-  password: process.env["dbpassword"],
-  database: process.env["database"],
-});
-
-conn.connect(function(err){
-    if(err){
-        console.log(err);
-    }
-})
-
-
-
+var express = require(`express`);
+var router = express.Router();
+var mysql = require("mysql");
+var conn = require("../dbConnect");
 
 router.get(`/:id`, function (req, res, next) {
   let productId = req.params.id;
-    let sql  = `SELECT products.*,
+  let sql = `SELECT products.*,
     teacher.name as teacher_name,
     teacher.title as teacher_title,
     teacher.photo as teacher_photo,
@@ -29,16 +13,14 @@ router.get(`/:id`, function (req, res, next) {
     from products
     join teacher on products.teacher_id = teacher.id
     where products.id = ${productId}
-   `
-conn.query(sql,[], function (err, rows) {
-    if(err){
-        console.log(err);
+   `;
+  conn.query(sql, [], function (err, rows) {
+    if (err) {
+      console.log(err);
     }
-        res.send(JSON.stringify(rows));
-        });
-    
+    res.send(JSON.stringify(rows));
+  });
 });
-
 
 router.get(`/car1/:id`, function (req, res, next) {
   let productId = req.params.id;
@@ -115,7 +97,7 @@ router.get(`/`, function (req, res, next) {
   join teacher on products.teacher_id = teacher.id
   ORDER BY products.id
    `;
-     area === "" && town === "" && keyword === "" ? sql : handleFilter;
+  area === "" && town === "" && keyword === "" ? sql : handleFilter;
   conn.query(sql, [], function (err, rows) {
     if (err) {
       console.log(err);
@@ -124,5 +106,4 @@ router.get(`/`, function (req, res, next) {
   });
 });
 
-
-module.exports  =  router;
+module.exports = router;
