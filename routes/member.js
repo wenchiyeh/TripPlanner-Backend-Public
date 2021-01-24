@@ -105,6 +105,7 @@ router.put("/:id", function (req, res, next) {
   const obj = JSON.parse(JSON.stringify(req.params)); // req.body = [Object: null prototype] { title: 'product' }
   //這樣寫才對
   console.log("/ud2", obj);
+  console.log('req/pa',req.body);
 
   conn.query(
     sqlKey,
@@ -121,6 +122,7 @@ router.put("/:id", function (req, res, next) {
       if (err) {
         console.log(err);
       }
+      // res.send(JSON.stringify(req.params));
       res.send(JSON.stringify({ result: "ok" }));
     }
   );
