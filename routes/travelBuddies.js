@@ -17,6 +17,18 @@ router.get("/", function (req, res, next) {
   });
 });
 
+//選擇揪團資料(精選)
+router.get("/carousel", function (req, res, next) {
+  let sql =
+    "SELECT travelbuddies.id, travelbuddies.themePhoto AS tb_themePhoto, travelbuddies.themeName AS tb_themeName FROM travelbuddies ORDER BY travelbuddies.id DESC LIMIT 5;";
+  conn.query(sql,[], function (err, rows) {
+    if (err) {
+      console.log(err);
+    }
+    res.send(JSON.stringify(rows));
+  });
+});
+
 //選擇揪團資料by每一筆
 router.get("/:id", function (req, res, next) {
   let tb_id = req.params.id;
@@ -258,8 +270,9 @@ router.put("/:id", function (req, res, next) {
 router.post("/tbrating", function (req, res, next) {
   let tb_id = req.body.tb_id;
   let m_id = req.body.m_id;
+  let give_id=req.body.give_id
   let rating = req.body.rating;
-  let sql = `INSERT INTO rating (travelBuddies_id, member_id, from_member_id,rating) VALUES (${tb_id},${m_id},1,'${rating}')`;
+  let sql = `INSERT INTO rating (travelBuddies_id, member_id, from_member_id,rating) VALUES (${tb_id},${m_id},${give_id},'${rating}')`;
   conn.query(sql, [], function (err, rows) {
     if (err) {
       console.log(err);
@@ -310,7 +323,7 @@ router.delete("/tbdropout/:id", function (req, res, next) {
 router.get("/membersselect/:id", function (req, res, next) {
   let tb_id = req.params.id;
   let sql =
-    "SELECT memberssignedup.membersStatus AS membersStatus, memberssignedup.members_id AS m_id,member.member_photo_id AS memberPhoto, member.member_name AS memberName ,travelBuddies.themeName AS themeName, travelBuddies.id AS tb_id FROM memberssignedup JOIN member ON memberssignedup.members_id=member.newsId JOIN travelBuddies ON memberssignedup.travelBuddies_id =travelBuddies.id WHERE travelBuddies.owner_id=1 AND travelBuddies_id=?";
+    "SELECT memberssignedup.membersStatus AS membersStatus, memberssignedup.members_id AS m_id,member.member_photo_id AS memberPhoto, member.member_name AS memberName ,travelBuddies.themeName AS themeName, travelBuddies.id AS tb_id FROM memberssignedup JOIN member ON memberssignedup.members_id=member.newsId JOIN travelBuddies ON memberssignedup.travelBuddies_id =travelBuddies.id WHERE travelBuddies_id=?";
   conn.query(sql, [tb_id], function (err, rows) {
     if (err) {
       console.log(err);
@@ -333,11 +346,24 @@ router.put("/membersselect/:id", function (req, res, next) {
   });
 });
 
-//把參加揪團者叫出來評分
+//把團主叫出來評分、把團主叫到聊天室
+router.get("/owner/:id", function (req, res, next) {
+  let tb_id = req.params.id;
+  let sql =
+    "SELECT travelBuddies.themeName AS themeName, member.member_name AS ownerName,travelbuddies.owner_id AS ownerId, travelBuddies.id AS tb_id FROM travelbuddies JOIN member ON travelbuddies.owner_id = member.newsId WHERE travelBuddies.id=?";
+  conn.query(sql, [tb_id], function (err, rows) {
+    if (err) {
+      console.log(err);
+    }
+    res.send(JSON.stringify(rows));
+  });
+});
+
+//把參加揪團者叫出來評分、把團員叫到聊天室
 router.get("/memberjoined/:id", function (req, res, next) {
   let tb_id = req.params.id;
   let sql =
-    "SELECT memberssignedup.membersStatus AS membersStatus, memberssignedup.members_id AS memberId, member.member_name AS memberName , travelBuddies.themeName AS themeName, travelBuddies.id AS tb_id FROM memberssignedup JOIN member ON memberssignedup.members_id=member.newsId JOIN travelBuddies ON memberssignedup.travelBuddies_id =travelBuddies.id WHERE travelBuddies_id=? AND memberssignedup.membersStatus='參與中'";
+    "SELECT memberssignedup.members_id AS memberId, member.member_name AS memberName , travelBuddies.themeName AS themeName, travelBuddies.id AS tb_id FROM memberssignedup JOIN member ON memberssignedup.members_id=member.newsId JOIN travelBuddies ON memberssignedup.travelBuddies_id =travelBuddies.id WHERE travelBuddies_id=? AND memberssignedup.membersStatus='參與中'";
   conn.query(sql, [tb_id], function (err, rows) {
     if (err) {
       console.log(err);

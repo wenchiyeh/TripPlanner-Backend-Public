@@ -135,6 +135,28 @@ router.get("/", function (req, res, next) {
   });
 });
 //
+//取得會員個人行程
+router.get("/myItin/:id", function (req, res, next) {
+  let { id } = req.params;
+  let sqlGetMyItin = `select
+  itinerary.id as itin_id,
+  itinerary.title,
+  itinerary.location,
+  itinerary.duration,
+  itinerary.establish_time,
+  itinerary.publish_time,
+  itinerary.member_id 
+  from itinerary
+  where itinerary.member_id = ?`;
+  conn.query(sqlGetMyItin, [id], function (err, rows) {
+    if (err) {
+      console.log(JSON.stringify(err));
+      return;
+    }
+    res.send(JSON.stringify(rows));
+  });
+});
+//
 //
 //取得特定行程資料
 router.get("/:itinId", function (req, res, next) {
