@@ -17,6 +17,18 @@ router.get("/", function (req, res, next) {
   });
 });
 
+//選擇揪團資料(精選)
+router.get("/carousel", function (req, res, next) {
+  let sql =
+    "SELECT travelbuddies.id, travelbuddies.themePhoto AS tb_themePhoto, travelbuddies.themeName AS tb_themeName FROM travelbuddies ORDER BY travelbuddies.id DESC LIMIT 5;";
+  conn.query(sql,[], function (err, rows) {
+    if (err) {
+      console.log(err);
+    }
+    res.send(JSON.stringify(rows));
+  });
+});
+
 //選擇揪團資料by每一筆
 router.get("/:id", function (req, res, next) {
   let tb_id = req.params.id;
