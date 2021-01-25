@@ -83,7 +83,7 @@ router.get("/", function (req, res, next) {
   let filterStr = "";
   let handleFilter = "";
   filter.forEach((ele) => {
-    if (ele == "") return;
+    if (ele === "" || ele === null) return;
     filterStr += ` and ${ele}`;
   });
   handleFilter = `
@@ -127,6 +127,26 @@ router.get("/", function (req, res, next) {
   //   console.log(handleSql);
   conn.query(sqlGetFilterList, [], function (err, rows) {
     //   conn.query(handleSql, [area, town, day, keyword], function (err, rows) {
+    if (err) {
+      console.log(JSON.stringify(err));
+      return;
+    }
+    res.send(JSON.stringify(rows));
+  });
+});
+//
+//
+//幻燈片
+router.get("/carousel/", function (req, res, next) {
+  let sqlGetCarousel = `select
+  itinerary.id as itin_id,
+  itinerary.title,
+  itinerary.image
+  from itinerary
+  where itinerary.publish_time != 'null' 
+  ORDER BY itinerary.id DESC LIMIT 5`;
+
+  conn.query(sqlGetCarousel, [], function (err, rows) {
     if (err) {
       console.log(JSON.stringify(err));
       return;
@@ -374,7 +394,7 @@ router.put("/edit", function (req, res) {
     for (let i = 0; i < boxIndex.length; ++i) {
       if (allBoxArray.length > 0) {
         let tempData = allBoxArray.shift();
-        let sqlUpdateBox = `update spotsbox set day = ?, box_order = ?, title = ?, begin = ?, location = ?, lat = ?, lng = ?, valid = ? where spotsbox.id = '${boxIndex[i].id}'`;
+        let sqlUpdateBox = `update spotsbox set day = ?, box_order = ?, title = ?, begin = ?, location = ?, lat = ?, lng = ?, image = ?, info = ?, valid = ? where spotsbox.id = '${boxIndex[i].id}'`;
         conn.query(
           sqlUpdateBox,
           [
@@ -385,6 +405,8 @@ router.put("/edit", function (req, res) {
             tempData.location,
             tempData.lat,
             tempData.lng,
+            tempData.image,
+            tempData.info,
             1,
           ],
           function (err, rows) {
@@ -449,38 +471,40 @@ router.put("/publish/:itin_id", function (req, res) {
   });
 
   boxData.forEach((item) => {
-    if (item.image === null && item.text === "") return;
-    let sqlArray = [];
-    let valueArray = [];
-    sqlArray.push(`update spotsbox set `);
-    if (item.image !== null) {
-      sqlArray.push(`image = ? `);
-      valueArray.push(item.image);
-    }
-    if (item.text !== null) {
-      sqlArray.push(`info = ? `);
-      valueArray.push(item.text);
-    }
-    let boxSql = "";
-    sqlArray.forEach((sqlItem, index) => {
-      if (index > 1) boxSql += ", ";
-      boxSql += sqlItem;
-    });
-    boxSql += ` where valid = 1 and itinerary_id = '${id}' and day = '${item.day}' and box_order = '${item.order}'`;
-    conn.query(boxSql, valueArray, function (err, rows) {
-      if (err) {
-        console.log(JSON.stringify(err));
-        return;
+    if (item.image === null && item.text === "") {
+    } else {
+      let sqlArray = [];
+      let valueArray = [];
+      sqlArray.push(`update spotsbox set `);
+      if (item.image !== null) {
+        sqlArray.push(`image = ? `);
+        valueArray.push(item.image);
       }
-    });
+      if (item.text !== null) {
+        sqlArray.push(`info = ? `);
+        valueArray.push(item.text);
+      }
+      let boxSql = "";
+      sqlArray.forEach((sqlItem, index) => {
+        if (index > 1) boxSql += ", ";
+        boxSql += sqlItem;
+      });
+      boxSql += ` where valid = 1 and itinerary_id = '${id}' and day = '${item.day}' and box_order = '${item.order}'`;
+      conn.query(boxSql, valueArray, function (err, rows) {
+        if (err) {
+          console.log(JSON.stringify(err));
+          return;
+        }
+      });
+    }
 
-    let itinSql = `update itinerary set info = ?, image = (select spotsbox.image from spotsbox where valid = 1 and itinerary_id = '${id}' and day = '${itinData.imageIndex.slice(
+    let itinSql = `update itinerary set image = (select spotsbox.image from spotsbox where valid = 1 and itinerary_id = '${id}' and day = '${itinData.imageIndex.slice(
       0,
       1
     )}' and box_order = '${itinData.imageIndex.slice(
       1,
       1
-    )}' ), publish_time = ? where valid = 1 and id = '${id}'`;
+    )}' ), info = ? , publish_time = ? where valid = 1 and id = '${id}'`;
     conn.query(itinSql, [itinData.info, nowStr], function (err, rows) {
       if (err) {
         console.log(JSON.stringify(err));
@@ -489,10 +513,11 @@ router.put("/publish/:itin_id", function (req, res) {
     });
   });
 
-  res.send(JSON.stringify({ result: "ok" }));
+  res.send(JSON.stringify({ result: "ok", time: nowStr }));
   //
 });
 //
+
 router.put("/unpublish/:itin_id", function (req, res) {
   let id = req.params.itin_id;
   let sql = `update itinerary set publish_time = null where itinerary.id = '${id}'`;
