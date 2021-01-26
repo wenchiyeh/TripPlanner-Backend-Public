@@ -5,10 +5,38 @@ var mysql = require("mysql");
 var moment = require("moment");
 var conn = require("../dbConnect");
 
+
+//判斷是否報名過
+router.get("/tbsignedupalready", function (req, res, next) {
+  let tb_id = req.query.tb_id;
+  let m_id =req.query.m_id;
+  let sql = `SELECT membersStatus FROM membersSignedUp WHERE travelBuddies_id=? AND members_id=?`;
+  conn.query(sql, [tb_id,m_id], function (err, rows) {
+    if (err) {
+      console.log(err);
+    }
+    res.send(JSON.stringify(rows));
+  });
+});
+
+//判斷是否給過星等
+router.get("/tbratingalready", function (req, res, next) {
+  let tb_id = req.query.tb_id;
+  let m_id =req.query.m_id;
+  let give_id = req.query.give_id;
+  let sql = `SELECT rating FROM rating WHERE travelBuddies_id=? AND member_id=? AND from_member_id=?`;
+  conn.query(sql, [tb_id,m_id,give_id], function (err, rows) {
+    if (err) {
+      console.log(err);
+    }
+    res.send(JSON.stringify(rows));
+  });
+});
+
 //揪團列表頁 //所有揪團資料
 router.get("/", function (req, res, next) {
   let sql =
-    "SELECT travelbuddies.id, member.member_name AS tb_owner, member.member_photo_id AS tb_memberphoto, travelbuddies.themeName AS tb_themeName, travelbuddies.themePhoto AS tb_themePhoto,travelbuddies.personsNeeded AS tb_personsNeeded, travelbuddies.genderNeeded AS tb_genderNeeded, travelbuddies.estimatedCost AS tb_estimatedCost, travelbuddies.lastApprovedDate AS tb_lastApprovedDate, travelbuddies.dateBegin AS tb_dateBegin , travelbuddies.dateEnd AS tb_dateEnd, daysCategory.daysCategory AS tb_daysCategory, GROUP_CONCAT(DISTINCT regionCategory.region ORDER BY regionCategory.id) AS tb_region ,GROUP_CONCAT(DISTINCT cityCategory.city ORDER BY cityCategory.id) AS tb_city,  travelBuddies.themeintro AS tb_themeIntro FROM travelbuddies JOIN member ON travelbuddies.owner_id=member.newsId JOIN categoryRelations ON categoryRelations. travelBuddies_id=travelbuddies.id JOIN cityCategory ON categoryRelations.cityCategory_id=cityCategory.id JOIN regionCategory ON cityCategory.regionCategory_id=regionCategory.id JOIN dayscategory ON travelbuddies.daysCategory_id=daysCategory.id GROUP BY travelBuddies.themeName ORDER BY travelBuddies.id;";
+    "SELECT travelbuddies.id, travelbuddies.liked AS tb_liked, travelbuddies.mark AS tb_mark, member.member_name AS tb_owner, member.member_photo_id AS tb_memberphoto, travelbuddies.themeName AS tb_themeName, travelbuddies.themePhoto AS tb_themePhoto,travelbuddies.personsNeeded AS tb_personsNeeded, travelbuddies.genderNeeded AS tb_genderNeeded, travelbuddies.estimatedCost AS tb_estimatedCost, travelbuddies.lastApprovedDate AS tb_lastApprovedDate, travelbuddies.dateBegin AS tb_dateBegin , travelbuddies.dateEnd AS tb_dateEnd, daysCategory.daysCategory AS tb_daysCategory, GROUP_CONCAT(DISTINCT regionCategory.region ORDER BY regionCategory.id) AS tb_region ,GROUP_CONCAT(DISTINCT cityCategory.city ORDER BY cityCategory.id) AS tb_city,  travelBuddies.themeintro AS tb_themeIntro FROM travelbuddies JOIN member ON travelbuddies.owner_id=member.newsId JOIN categoryRelations ON categoryRelations. travelBuddies_id=travelbuddies.id JOIN cityCategory ON categoryRelations.cityCategory_id=cityCategory.id JOIN regionCategory ON cityCategory.regionCategory_id=regionCategory.id JOIN dayscategory ON travelbuddies.daysCategory_id=daysCategory.id GROUP BY travelBuddies.themeName ORDER BY travelBuddies.id;";
   conn.query(sql, [], function (err, rows) {
     if (err) {
       console.log(err);
@@ -281,11 +309,25 @@ router.post("/tbrating", function (req, res, next) {
   });
 });
 
+
+
 //取得星等
 router.get("/tbrating/:id", function (req, res, next) {
   let tb_id = req.params.id;
-  let sql = `SELECT AVG(rating) AS rating FROM rating WHERE travelBuddies_id=? AND member_id=?`;
+  let sql = `SELECT AVG(rating) AS rating, COUNT(from_member_id) AS member_giveRating FROM rating WHERE travelBuddies_id=? AND member_id=?`;
   conn.query(sql, [tb_id, 1], function (err, rows) {
+    if (err) {
+      console.log(err);
+    }
+    res.send(JSON.stringify(rows));
+  });
+});
+
+//取得人數
+router.get("/tbratingmembers/:id", function (req, res, next) {
+  let tb_id = req.params.id;
+  let sql = `SELECT COUNT(members_id) AS member_count FROM membersSignedUp WHERE travelBuddies_id=? AND membersStatus=?`;
+  conn.query(sql, [tb_id,"參與中"], function (err, rows) {
     if (err) {
       console.log(err);
     }
