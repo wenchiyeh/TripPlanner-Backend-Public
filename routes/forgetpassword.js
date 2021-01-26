@@ -1,3 +1,4 @@
+//忘記密碼用
 var express = require("express");
 var router = express.Router();
 //使用環境參數

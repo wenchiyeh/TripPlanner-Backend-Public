@@ -80,29 +80,29 @@ app.post("/upload/:dir?", upload.array("file"), function (req, res) {
 });
 //
 //會員圖片上傳
-// var storageMember = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, __dirname + "/public/images/userphoto");
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, hash.generateHash({ length: 8 }) + file.originalname);
-//   },
-// });
-// var uploadMember = multer({ storage: storageMember });
-// app.post("/upload/member", uploadMember.array("file"), function (req, res) {
-//   let url = "/userphoto";
-//   let name = [];
-//   req.files.forEach((ele) => {
-//     name.push(ele.filename);
-//   });
-//   res.send(JSON.stringify({ data: url, name: name }));
-// });
-//
-// app.post("/upload", function (req, res) {
-//   //測試fetch
-//   let test = "ok";
-//   res.send(JSON.stringify(test));
-// });
+var storageMember = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, __dirname + "/public/images/userphoto");
+  },
+  filename: function (req, file, cb) {
+    cb(null, hash.generateHash({ length: 8 }) + file.originalname);
+  },
+});
+var uploadMember = multer({ storage: storageMember });
+app.post("/upload/member", uploadMember.array("file"), function (req, res) {
+  let url = "/userphoto";
+  let name = [];
+  req.files.forEach((ele) => {
+    name.push(ele.filename);
+  });
+  res.send(JSON.stringify({ data: url, name: name }));
+});
+
+app.post("/upload", function (req, res) {
+  //測試fetch
+  let test = "ok";
+  res.send(JSON.stringify(test));
+});
 //更新會員資料
 // app.update = (req, res) => {
 //   const id = req.params.id;
@@ -128,19 +128,19 @@ app.post("/upload/:dir?", upload.array("file"), function (req, res) {
 //     });
 // };
 //測試用
-app.get("/member/:id", function (req, res) {
-  conn.query(
-    "select * from member where id = ?",
-    req.params.id,
-    function (err, rows) {
-      if (err) {
-        console.log(JSON.stringify(err));
-        return;
-      }
-      res.send(JSON.stringify(rows));
-    }
-  );
-});
+// app.get("/member/:id", function (req, res) {
+//   conn.query(
+//     "select * from member where id = ?",
+//     req.params.id,
+//     function (err, rows) {
+//       if (err) {
+//         console.log(JSON.stringify(err));
+//         return;
+//       }
+//       res.send(JSON.stringify(rows));
+//     }
+//   );
+// });
 //
 //後方都不要管
 
