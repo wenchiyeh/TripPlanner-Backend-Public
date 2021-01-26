@@ -27,9 +27,9 @@ router.get("/", function (req, res, next) {
   console.log("/member", obj);
 
   conn.query(sqlKey, [], function (err, rows) {
-    if (err) {
-      console.log(err);
-    }
+    // if (err) {
+    //   console.log(err);
+    // }
     res.send(JSON.stringify(rows));
   });
 });
@@ -46,9 +46,9 @@ router.get("/:id", function (req, res, next) {
   //這樣寫才對
   console.log("/member:id", obj);
   conn.query(sqlKey, [], function (err, rows) {
-    if (err) {
-      console.log(err);
-    }
+    // if (err) {
+    //   console.log(err);
+    // }
     console.log(`member ${id} = ${rows}`);
     res.send(JSON.stringify(rows[0]));
   });
@@ -74,9 +74,9 @@ router.put("/", function (req, res, next) {
   console.log("/ud1", obj);
 
   conn.query(sqlKey, [], function (err, rows) {
-    if (err) {
-      console.log(err);
-    }
+    // if (err) {
+    //   console.log(err);
+    // }
     res.send(JSON.stringify(rows));
   });
 });
@@ -116,9 +116,9 @@ router.put("/:id", function (req, res, next) {
       req.body.member_aboutme,
     ],
     function (err, rows) {
-      if (err) {
-        console.log(err);
-      }
+      // if (err) {
+      //   console.log(err);
+      // }
       // res.send(JSON.stringify(req.params));
       res.send(JSON.stringify({ result: "ok" }));
     }
@@ -144,9 +144,9 @@ router.put("/updataPic/:id", function (req, res, next) {
       
     ],
     function (err, rows) {
-      if (err) {
-        console.log(err);
-      }
+      // if (err) {
+      //   console.log(err);
+      // }
       // res.send(JSON.stringify(req.params));
       res.send(JSON.stringify({ result: "ok" }));
     }
