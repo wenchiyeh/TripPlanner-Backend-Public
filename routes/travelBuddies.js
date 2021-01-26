@@ -73,7 +73,7 @@ router.get("/:id", function (req, res, next) {
 //新增揪團
 router.post("/", function (req, res, next) {
   let sql1 =
-    "INSERT INTO travelbuddies SET themeName = ?, owner_id = ?, themePhoto = ?, dateBegin = ?, dateEnd = ?, daysCategory_id = ?, lastApprovedDate = ?, personsNeeded = ?, genderNeeded = ?, estimatedCost = ?, themeIntro = ?, valid = ? ";
+    "INSERT INTO travelbuddies SET themeName = ?, owner_id = ?, themePhoto = ?, dateBegin = ?, dateEnd = ?, daysCategory_id = ?, lastApprovedDate = ?, personsNeeded = ?, genderNeeded = ?, estimatedCost = ?, themeIntro = ?, valid = ? ,liked=?, mark=?";
   let sql2 =
     "SELECT cityCategory.regionCategory_id FROM cityCategory WHERE cityCategory.id= ?";
   let sql3 =
@@ -109,6 +109,8 @@ router.post("/", function (req, res, next) {
         tbEstimatedCost,
         tbThemeIntro,
         1,
+        0,
+        0,
       ],
       function (err, result) {
         console.log(query.sql);
