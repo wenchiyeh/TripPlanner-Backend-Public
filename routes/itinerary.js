@@ -92,7 +92,7 @@ router.get("/", function (req, res, next) {
     join citycategory on citycategory.city = spotsbox.location 
     join regioncategory on regioncategory.id = citycategory.regionCategory_id 
     join itinerary on itinerary.id = spotsbox.itinerary_id  
-    where spotsbox.valid = 1 ${filterStr} )`;
+    where spotsbox.valid = 1 ${filterStr} ) order by itinerary.id DESC`;
 
   let sqlGetFilterList = `select
   itinerary.id as itin_id,
@@ -113,7 +113,7 @@ router.get("/", function (req, res, next) {
   where itinerary.publish_time != 'null' ${dayOption} and `;
 
   area === "" && town === "" && day === 0 && keyword === ""
-    ? (sqlGetFilterList += `itinerary.valid = 1`)
+    ? (sqlGetFilterList += `itinerary.valid = 1 order by itinerary.id DESC`)
     : (sqlGetFilterList += handleFilter);
 
   // let handleSql = `select * from itinerary
@@ -497,20 +497,20 @@ router.put("/publish/:itin_id", function (req, res) {
         }
       });
     }
-
-    let itinSql = `update itinerary set image = (select spotsbox.image from spotsbox where valid = 1 and itinerary_id = '${id}' and day = '${itinData.imageIndex.slice(
-      0,
-      1
-    )}' and box_order = '${itinData.imageIndex.slice(
-      1,
-      1
-    )}' ), info = ? , publish_time = ? where valid = 1 and id = '${id}'`;
-    conn.query(itinSql, [itinData.info, nowStr], function (err, rows) {
-      if (err) {
-        console.log(JSON.stringify(err));
-        return;
-      }
-    });
+  });
+  let itinSql = `update itinerary set image = (select spotsbox.image from spotsbox where valid = 1 and itinerary_id = '${id}' and day = '${itinData.imageIndex.slice(
+    0,
+    1
+  )}' and box_order = '${itinData.imageIndex.slice(
+    1,
+    2
+  )}' ), info = ? , publish_time = ? where valid = 1 and id = '${id}'`;
+  console.log(itinSql);
+  conn.query(itinSql, [itinData.info, nowStr], function (err, rows) {
+    if (err) {
+      console.log(JSON.stringify(err));
+      return;
+    }
   });
 
   res.send(JSON.stringify({ result: "ok", time: nowStr }));
